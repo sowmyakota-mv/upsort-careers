@@ -1,4 +1,3 @@
-
 import { Star, Quote, ArrowRight } from "lucide-react";
 
 const SuccessStories = () => {

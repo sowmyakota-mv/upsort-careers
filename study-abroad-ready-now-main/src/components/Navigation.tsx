@@ -1,10 +1,13 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, User, UserCircle, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const navItems = [
     { label: "Home", href: "#home" },
@@ -18,7 +21,7 @@ const Navigation = () => {
     setIsMenuOpen(false);
     const element = document.querySelector(href);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -26,9 +29,10 @@ const Navigation = () => {
     <nav className="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-100">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
+          {/* Logo Section */}
           <div className="flex items-center">
-            <img 
-              src="/lovable-uploads/Upsort-career.png" 
+            <img
+              src="/lovable-uploads/Upsort-career.png"
               alt="Upsort Careers"
               className="h-10 w-auto"
             />
@@ -46,15 +50,39 @@ const Navigation = () => {
                 {item.label}
               </button>
             ))}
-            <Button 
-              onClick={() => handleNavClick('#register')}
-              className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              Register
-            </Button>
+
+            {/* User Section */}
+            {!user ? (
+              <Button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  navigate("/login");
+                }}
+                className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white"
+              >
+                LogIn / SignIn
+              </Button>
+            ) : (
+              <div className="flex items-center justify-between space-x-4 hover:cursor-pointer">
+                <UserCircle className="w-8 h-8 text-blue-600" />
+                <span className="font-medium text-gray-700">
+                  {user.name}
+                </span>
+                <Button
+                size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    logout();
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  Logout
+                </Button>
+              </div>
+            )}
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile Menu Button */}
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -78,13 +106,39 @@ const Navigation = () => {
                   {item.label}
                 </button>
               ))}
-              <div className="px-3 py-2">
-                <Button 
-                  onClick={() => handleNavClick('#register')}
-                  className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white"
-                >
-                  Register
-                </Button>
+
+              {/* Mobile User Section */}
+              <div className="border-t border-slate-100 mt-3 pt-3 px-3">
+                {!user ? (
+                  <Button
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      navigate("/login");
+                    }}
+                    className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white"
+                  >
+                    LogIn / SignIn
+                  </Button>
+                ) : (
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <UserCircle className="w-8 h-8 text-blue-600" />
+                      <span className="font-medium text-gray-700">
+                        {user.name}
+                      </span>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        logout();
+                        setIsMenuOpen(false);
+                      }}
+                    >
+                      Logout
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
