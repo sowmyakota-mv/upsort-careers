@@ -2,6 +2,8 @@ import React, { useState, useRef } from 'react';
 import { Button } from './ui/button';
 import { useNavigate } from 'react-router-dom';
 import emailjs from 'emailjs-com';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 const step1Questions = [
   { id: 1, text: 'How confident are you in managing your tuition fees and living expenses abroad without financial stress?' },
@@ -21,6 +23,7 @@ const step2Questions = [
 
 const AssessmentForm = () => {
   const [step, setStep] = useState<number>(1);
+  const [contactError, setContactError] = useState('');
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
@@ -40,7 +43,7 @@ const AssessmentForm = () => {
   const questionRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const contactRegex = /^[0-9]{10}$/; 
+  const contactRegex = /^\+?[1-9]\d{6,14}$/;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -188,78 +191,90 @@ const AssessmentForm = () => {
       setSubmitted(true);
     }
   };
+
   const handleAnswerChange = (index: number, value: number) => {
-  const updatedAnswers = [...formData.answers];
-  updatedAnswers[index] = value;
+    const updatedAnswers = [...formData.answers];
+    updatedAnswers[index] = value;
 
-  let newErrors = { ...errors, ratings: [...errors.ratings] };
-  newErrors.ratings[index] = ''; 
+    let newErrors = { ...errors, ratings: [...errors.ratings] };
+    newErrors.ratings[index] = '';
 
-  setFormData((prevData) => ({ ...prevData, answers: updatedAnswers }));
-  setErrors(newErrors);
-};
+    setFormData((prevData) => ({ ...prevData, answers: updatedAnswers }));
+    setErrors(newErrors);
+  };
 
+  const handleContactChange = (value: string, data: any) => {
+    setFormData(prev => ({ ...prev, contact: value }));
+
+    if (value.length < 7 || value.length > 15) {
+      setContactError('Contact number must be between 7 and 15 digits.');
+    } else {
+      setContactError('');
+    }
+  };
 
   return (
-    <div className={`min-h-screen flex ${step === 1 ? 'items-center justify-center' : 'items-start justify-end'} p-6`}>
-      <div className={`bg-white shadow-lg rounded-2xl transition-all duration-500 ${step === 1 ? 'w-[550px]' : 'w-[1000px] mr-20'} p-6`}>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
+      <div className="bg-white shadow-lg rounded-2xl w-full max-w-[700px] p-8">
         {submitted ? (
-          <div className="text-center p-8">
-            <h2 className="text-3xl font-bold mb-4">Thank you for submitting the assessment.</h2>
+          <div className="text-center p-4">
+            <h2 className="text-3xl font-bold ">Thank you for submitting the assessment.</h2>
             <p className="text-lg">We will reach out to you soon.</p>
             <Button className="mt-6" onClick={() => navigate('/')}>
               Go to Home
             </Button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-8">
             <div className="text-center">
-              <img src="/lovable-uploads/Upsort-career.png" alt="Upsort Careers" className="h-16 mx-auto" />
-              <h2 className="text-3xl font-bold mb-8">Upsort Careers</h2>
+              <img src="/lovable-uploads/Upsort-career.png" alt="Upsort Careers" className="h-16 mx-auto mb-4" />
+              <h2 className="text-3xl font-bold mb-1">Upsort Careers</h2>
             </div>
 
             {step === 1 && (
-              <div className='w-[550px] flex flex-col items-center justify-center'>
-                <div className="mb-4">
-                  <label className="block font-medium mb-1">Name *</label>
+              <div className="flex flex-col items-center w-full max-w-[550px] mx-auto">
+                <h2 className="text-2xl font-bold mb-4">Registration Form</h2>
+
+                <div className="mb-4 w-full">
+                  <label className="block font-medium mb-1">Full Name *</label>
                   <input
                     type="text"
                     name="name"
-                    placeholder='Enter your Name'
+                    placeholder="Enter your Full Name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className="border p-2 h-[50px] w-[300px] rounded"
+                    className="border p-2 h-[50px] w-full rounded"
                   />
                   {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
                 </div>
 
-                <div className="mb-4">
-                  <label className="block font-medium mb-1">Contact *</label>
-                  <input
-                    type="text"
-                    name="contact"
-                    placeholder='Enter your Contact Number'
+                <div className="mb-4 w-full">
+                  <label className="block font-medium mb-1">Contact Number *</label>
+                  <PhoneInput
+                    country={'auto'}
+                    enableSearch={true}
                     value={formData.contact}
-                    onChange={handleInputChange}
-                    className="w-[300px] border p-2 h-[50px] rounded"
+                    onChange={handleContactChange}
+                    placeholder="Enter your Phone Number"
+                    inputStyle={{ width: '100%', height: '50px' }}
                   />
                   {errors.contact && <p className="text-red-500 text-sm mt-1">{errors.contact}</p>}
                 </div>
 
-                <div className="mb-4">
-                  <label className="block font-medium mb-1">Email *</label>
+                <div className="mb-4 w-full">
+                  <label className="block font-medium mb-1">Email Address *</label>
                   <input
                     type="email"
                     name="email"
-                    placeholder='Enter your Email'
+                    placeholder="Enter your Email Address"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-[300px] border p-2 h-[50px] rounded"
+                    className="border p-2 h-[50px] w-full rounded"
                   />
                   {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
                 </div>
 
-                <Button type="button" onClick={handleLogin}>
+                <Button type="button" onClick={handleLogin} className="w-full mt-4">
                   Register & Continue
                 </Button>
               </div>
@@ -267,12 +282,12 @@ const AssessmentForm = () => {
 
             {step === 2 && (
               <>
-                <h2 className="text-2xl font-bold mb-4 text-center">Study Abroad Readiness Assessment</h2>
-                <p className="text-lg font-semibold mb-4">Please rank the following questions on a scale from 1 to 10:</p>
+                <h2 className="text-2xl font-bold text-center">Study Abroad Readiness Assessment</h2>
+                <p className="text-lg font-semibold text-center">Please rank the following questions on a scale from 1 to 10:</p>
 
                 {step1Questions.map((question, index) => (
-                  <div key={question.id} className="mb-8" ref={(el) => (questionRefs.current[index] = el)}>
-                    <h3 className="text-lg font-semibold mb-4">
+                  <div key={question.id} ref={(el) => (questionRefs.current[index] = el)}>
+                    <h3 className="text-lg font-semibold mb-2">
                       {index + 1}. {question.text}
                     </h3>
 
@@ -297,7 +312,7 @@ const AssessmentForm = () => {
                   </div>
                 ))}
 
-                <Button type="button" onClick={handleNext}>
+                <Button type="button" onClick={handleNext} className="mx-auto block">
                   Next
                 </Button>
               </>
@@ -309,8 +324,8 @@ const AssessmentForm = () => {
                   const globalIndex = step1Questions.length + index;
 
                   return (
-                    <div key={question.id} className="mb-8" ref={(el) => (questionRefs.current[globalIndex] = el)}>
-                      <h3 className="text-lg font-semibold mb-4">
+                    <div key={question.id} ref={(el) => (questionRefs.current[globalIndex] = el)}>
+                      <h3 className="text-lg font-semibold mb-1">
                         {globalIndex + 1}. {question.text}
                       </h3>
 
@@ -336,7 +351,7 @@ const AssessmentForm = () => {
                   );
                 })}
 
-                <div className="flex gap-4">
+                <div className="flex gap-4 justify-center">
                   <Button type="button" onClick={handleBack}>
                     Back
                   </Button>

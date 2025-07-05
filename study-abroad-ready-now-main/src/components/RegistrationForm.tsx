@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import emailjs from 'emailjs-com';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 const RegistrationForm = () => {
   const { login } = useAuth();
@@ -10,9 +12,9 @@ const RegistrationForm = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-
   const [emailError, setEmailError] = useState('');
   const [contactError, setContactError] = useState('');
+  const [countryName, setCountryName] = useState('');
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -27,11 +29,6 @@ const RegistrationForm = () => {
     return emailRegex.test(email);
   };
 
-  const validateContact = (contact: string) => {
-    const contactRegex = /^\d{10}$/;
-    return contactRegex.test(contact);
-  };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -41,14 +38,6 @@ const RegistrationForm = () => {
         setEmailError('Please enter a valid email address.');
       } else {
         setEmailError('');
-      }
-    }
-
-    if (name === 'contact') {
-      if (!validateContact(value)) {
-        setContactError('Contact must be 10 digits and contain numbers only.');
-      } else {
-        setContactError('');
       }
     }
   };
@@ -62,11 +51,12 @@ const RegistrationForm = () => {
       city: formData.city,
     };
 
-    emailjs.send('service_6m3emyd', 'template_p3v0tvf', templateParams, 'WV4ATcmY4I9TjdaBe')
-      .then((response) => {
+    emailjs
+      .send('service_6m3emyd', 'template_p3v0tvf', templateParams, 'WV4ATcmY4I9TjdaBe')
+      .then(response => {
         console.log('Registration Email sent successfully!', response.status, response.text);
       })
-      .catch((err) => {
+      .catch(err => {
         console.error('Failed to send registration email:', err);
       });
   };
@@ -75,14 +65,13 @@ const RegistrationForm = () => {
     e.preventDefault();
     setError('');
 
-    
     if (!validateEmail(formData.email)) {
       setEmailError('Please enter a valid email address.');
       return;
     }
 
-    if (!validateContact(formData.contact)) {
-      setContactError('Contact must be 7-15 digits and contain numbers only.');
+    if (formData.contact.length < 7 || formData.contact.length > 15) {
+      setContactError('Contact number must be between 7 and 15 digits.');
       return;
     }
 
@@ -95,6 +84,17 @@ const RegistrationForm = () => {
 
   const handleReturnHome = () => {
     navigate('/');
+  };
+
+  const handleContactChange = (value: string, data: any) => {
+    setFormData(prev => ({ ...prev, contact: value }));
+    setCountryName(data.name || 'Unknown');
+
+    if (value.length < 7 || value.length > 15) {
+      setContactError('Contact number must be between 7 and 15 digits.');
+    } else {
+      setContactError('');
+    }
   };
 
   return (
@@ -120,16 +120,24 @@ const RegistrationForm = () => {
 
       <div className="lg:w-1/2 flex justify-center items-center bg-white p-10">
         {isSubmitted ? (
-          <div className='flex flex-col justify-center items-center w-full min-h-[500px] bg-white p-10 text-center rounded-xl shadow-lg'>
-            <h2 className='text-4xl font-bold mb-4 text-gray-800'>Thank You!</h2>
-            <p className='text-lg text-gray-600 mb-2'>Your submission has been successfully received.</p>
-            <button onClick={handleReturnHome} className='bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300'>
+          <div className="flex flex-col justify-center items-center w-full min-h-[500px] bg-white p-10 text-center rounded-xl shadow-lg">
+            <h2 className="text-4xl font-bold mb-4 text-gray-800">Thank You!</h2>
+            <p className="text-lg text-gray-600 mb-2">Your submission has been successfully received.</p>
+            <button
+              onClick={handleReturnHome}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300"
+            >
               OK
             </button>
           </div>
         ) : (
-          <form onSubmit={handleRegisterSubmit} className="w-full max-w-md space-y-6 bg-gray-50 p-8 rounded-xl shadow-lg">
-            <h2 className="text-3xl font-bold mb-4 text-center text-gray-800">Create Account</h2>
+          <form
+            onSubmit={handleRegisterSubmit}
+            className="w-full max-w-md space-y-6 bg-gray-50 p-8 rounded-xl shadow-lg"
+          >
+            <h2 className="text-3xl font-bold mb-4 text-center text-gray-800">
+              Hi 👋
+            </h2>
             <p className="text-gray-600 text-center mb-6">Let's start with your personal details</p>
 
             {error && <div className="text-red-500 text-center mb-4">{error}</div>}
@@ -177,14 +185,13 @@ const RegistrationForm = () => {
 
               <div>
                 <label className="block text-gray-700 font-semibold mb-2">Contact Number *</label>
-                <input
-                  type="tel"
-                  name="contact"
-                  placeholder="Enter your phone number"
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                  onChange={handleInputChange}
+                <PhoneInput
+                  country={'auto'}
+                  enableSearch={true}
                   value={formData.contact}
+                  onChange={handleContactChange}
+                  placeholder="Enter your phone number"
+                  inputStyle={{ width: '100%', height: '50px' }}
                 />
                 {contactError && <p className="text-red-500 text-sm mt-1">{contactError}</p>}
               </div>
@@ -205,7 +212,9 @@ const RegistrationForm = () => {
 
             <button
               type="submit"
-              className={`w-full ${emailError || contactError ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'} text-white font-semibold py-3 rounded-lg transition duration-300`}
+              className={`w-full ${
+                emailError || contactError ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+              } text-white font-semibold py-3 rounded-lg transition duration-300`}
               disabled={!!emailError || !!contactError || isLoading}
             >
               {isLoading ? 'Registering...' : 'Register'}

@@ -87,7 +87,7 @@ const ContactSection = () => {
       icon: Clock,
       title: "Available",
       detail: "Monday-Saturday,9AM-8PM IST",
-      link: "",
+      link: "", // This will now render as a div (non-clickable)
       color: "from-orange-500 to-orange-600"
     }
   ];
@@ -126,27 +126,43 @@ const ContactSection = () => {
             </h3>
 
             <div className="grid md:grid-cols-2 gap-6">
-              {contactMethods.map((method, index) => (
-                <a
-                  key={index}
-                  href={method.link || "#"}
-                  target={method.link ? "_blank" : undefined}
-                  rel={method.link ? "noopener noreferrer" : undefined}
-                  className="block"
-                >
-                  <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 group cursor-pointer">
-                    <div
-                      className={`inline-flex p-3 rounded-xl bg-gradient-to-r ${method.color} mb-4 group-hover:scale-110 transition-transform`}
-                    >
-                      <method.icon size={24} />
+              {contactMethods.map((method, index) =>
+                method.link ? (
+                  <a
+                    key={index}
+                    href={method.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block"
+                  >
+                    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 group cursor-pointer">
+                      <div
+                        className={`inline-flex p-3 rounded-xl bg-gradient-to-r ${method.color} mb-4 group-hover:scale-110 transition-transform`}
+                      >
+                        <method.icon size={24} />
+                      </div>
+                      <h4 className="font-bold text-lg mb-2">{method.title}</h4>
+                      <p className="text-slate-300">{method.detail}</p>
                     </div>
-                    <h4 className="font-bold text-lg mb-2">{method.title}</h4>
-                    <p className="text-slate-300">{method.detail}</p>
+                  </a>
+                ) : (
+                  <div
+                    key={index}
+                    className="block cursor-default"
+                  >
+                    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 group cursor-default">
+                      <div
+                        className={`inline-flex p-3 rounded-xl bg-gradient-to-r ${method.color} mb-4 group-hover:scale-110 transition-transform`}
+                      >
+                        <method.icon size={24} />
+                      </div>
+                      <h4 className="font-bold text-lg mb-2">{method.title}</h4>
+                      <p className="text-slate-300">{method.detail}</p>
+                    </div>
                   </div>
-                </a>
-              ))}
+                )
+              )}
 
-              
               <EmailChooser />
             </div>
           </div>
