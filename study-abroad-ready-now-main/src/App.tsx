@@ -7,9 +7,8 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import RegistrationForm from "./components/RegistrationForm";
 import AssessmentForm from "./components/AssessmentForm";
-import { AuthProvider } from "./context/AuthContext"; // Import AuthProvider
-import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRoute
-import LoginForm from "./components/LoginForm";
+import { AuthProvider } from "./context/AuthContext"; 
+
 
 const queryClient = new QueryClient();
 
@@ -22,14 +21,11 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/login" element={<LoginForm />} />
             <Route path="/register" element={<RegistrationForm />} />
             <Route 
               path="/assessment" 
               element={
-                <ProtectedRoute>
                   <AssessmentForm />
-                </ProtectedRoute>
               } 
             />
             <Route path="*" element={<NotFound />} />

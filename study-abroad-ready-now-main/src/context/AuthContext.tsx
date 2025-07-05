@@ -2,8 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  user: { name: string; email: string } | null;  // Add this
-  login: (userData: { name: string; email: string }) => void; // Add this
+  user: { name: string; email: string } | null; 
+  login: (userData: { name: string; email: string }) => void; 
   logout: () => void;
   intendedRoute: string | null;
   setIntendedRoute: (route: string | null) => void;

@@ -1,4 +1,4 @@
-// src/components/ProtectedRoute.tsx
+
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 
@@ -7,7 +7,7 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const location = useLocation();
 
   if (!isAuthenticated) {
-    setIntendedRoute(location.pathname); // Save the intended page
+    setIntendedRoute(location.pathname); 
     return <Navigate to="/register" replace />;
   }
 

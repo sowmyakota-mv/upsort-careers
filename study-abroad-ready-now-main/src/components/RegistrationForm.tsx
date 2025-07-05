@@ -2,77 +2,61 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import emailjs from 'emailjs-com';
-import axios from 'axios';
-import { Eye, EyeOff } from 'lucide-react';
-
-let debounceTimer: ReturnType<typeof setTimeout>;
 
 const RegistrationForm = () => {
-  const { login, intendedRoute, setIntendedRoute } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isRegistering, setIsRegistering] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [emailExists, setEmailExists] = useState(false);
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const [contactError, setContactError] = useState('');
 
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
+    firstName: '',
+    lastName: '',
     contact: '',
+    email: '',
     city: '',
-    password: '',
-    confirmPassword: ''
   });
 
-  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validateContact = (contact: string) => {
+    const contactRegex = /^\d{10}$/;
+    return contactRegex.test(contact);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
 
-    const updatedFormData = { ...formData, [name]: value };
-    setFormData(updatedFormData);
-
-    // Live password match validation
-    if (name === 'confirmPassword' || (name === 'password' && updatedFormData.confirmPassword.length > 0)) {
-      if (updatedFormData.password !== updatedFormData.confirmPassword) {
-        setPasswordError('Passwords do not match!');
+    if (name === 'email') {
+      if (!validateEmail(value)) {
+        setEmailError('Please enter a valid email address.');
       } else {
-        setPasswordError('');
+        setEmailError('');
       }
     }
 
-    // Live email availability check
-    if (name === 'email') {
-      try {
-        if (value.trim().length > 5) {
-          const res = await axios.get(`/api/auth/check-email?email=${value}`);
-          if (res.data.exists) {
-  setEmailExists(true);
-  setEmailError('Email already registered. Please login!'); // Show it here
-} else {
-  setEmailExists(false);
-  setError('');
-  setEmailError('');
-}
-        } else {
-          setEmailExists(false);
-          setError('');
-        }
-      } catch (err) {
-        console.error('Email check error:', err);
-        setEmailExists(false);
+    if (name === 'contact') {
+      if (!validateContact(value)) {
+        setContactError('Contact must be 10 digits and contain numbers only.');
+      } else {
+        setContactError('');
       }
     }
   };
 
   const sendRegistrationEmail = () => {
     const templateParams = {
-      name: formData.fullName,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
       email: formData.email,
       contact: formData.contact,
       city: formData.city,
@@ -91,29 +75,22 @@ const RegistrationForm = () => {
     e.preventDefault();
     setError('');
 
-    if (passwordError || emailError) {
+    
+    if (!validateEmail(formData.email)) {
+      setEmailError('Please enter a valid email address.');
+      return;
+    }
+
+    if (!validateContact(formData.contact)) {
+      setContactError('Contact must be 7-15 digits and contain numbers only.');
       return;
     }
 
     setIsLoading(true);
-
-    const { confirmPassword, ...submitData } = formData;
-
-    axios.post('/api/auth/register', submitData)
-      .then(res => {
-        console.log('Registration successful:', res.data);
-        sendRegistrationEmail();
-        login({ name: formData.fullName, email: formData.email });
-        setIsSubmitted(true);
-      })
-      .catch(err => {
-  console.error('Registration error:', err.response?.data || err.message);
-  setError(err.response?.data?.message || err.message || 'Registration failed.');
-})
-
-      .finally(() => {
-        setIsLoading(false);
-      });
+    sendRegistrationEmail();
+    login({ name: `${formData.firstName} ${formData.lastName}`, email: formData.email });
+    setIsSubmitted(true);
+    setIsLoading(false);
   };
 
   const handleReturnHome = () => {
@@ -159,14 +136,28 @@ const RegistrationForm = () => {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-gray-700 font-semibold mb-2">Full Name *</label>
+                <label className="block text-gray-700 font-semibold mb-2">First Name *</label>
                 <input
                   type="text"
-                  name="fullName"
-                  placeholder="Enter your full name"
+                  name="firstName"
+                  placeholder="Enter your First Name"
                   className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                   onChange={handleInputChange}
+                  value={formData.firstName}
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">Last Name *</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  placeholder="Enter your Last Name"
+                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                  onChange={handleInputChange}
+                  value={formData.lastName}
                 />
               </div>
 
@@ -176,9 +167,10 @@ const RegistrationForm = () => {
                   type="email"
                   name="email"
                   placeholder="Enter your email"
-                  className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${emailExists ? 'border-red-500 focus:ring-red-500' : 'focus:ring-blue-500'}`}
+                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                   onChange={handleInputChange}
+                  value={formData.email}
                 />
                 {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
               </div>
@@ -192,7 +184,9 @@ const RegistrationForm = () => {
                   className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                   onChange={handleInputChange}
+                  value={formData.contact}
                 />
+                {contactError && <p className="text-red-500 text-sm mt-1">{contactError}</p>}
               </div>
 
               <div>
@@ -204,63 +198,18 @@ const RegistrationForm = () => {
                   className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                   onChange={handleInputChange}
+                  value={formData.city}
                 />
-              </div>
-
-              {/* Password with Toggle */}
-              <div className="relative">
-                <label className="block text-gray-700 font-semibold mb-2">Password *</label>
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  name="password"
-                  placeholder="Enter your password"
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                  onChange={handleInputChange}
-                />
-                <span
-                  className="absolute top-10 right-4 cursor-pointer text-gray-500"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOff /> : <Eye />}
-                </span>
-              </div>
-
-              {/* Confirm Password with Toggle */}
-              <div className="relative">
-                <label className="block text-gray-700 font-semibold mb-2">Confirm Password *</label>
-                <input
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  name="confirmPassword"
-                  placeholder="Confirm your password"
-                  className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${passwordError ? 'border-red-500 focus:ring-red-500' : 'focus:ring-blue-500'}`}
-                  required
-                  onChange={handleInputChange}
-                />
-                <span
-                  className="absolute top-10 right-4 cursor-pointer text-gray-500"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? <EyeOff /> : <Eye />}
-                </span>
-                {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
               </div>
             </div>
 
             <button
               type="submit"
-              disabled={isLoading || !!passwordError || emailExists}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition duration-300"
+              className={`w-full ${emailError || contactError ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'} text-white font-semibold py-3 rounded-lg transition duration-300`}
+              disabled={!!emailError || !!contactError || isLoading}
             >
               {isLoading ? 'Registering...' : 'Register'}
             </button>
-
-            <p className="text-center text-sm mt-4">
-              Already have an account?{' '}
-              <button type="button" onClick={() => navigate('/login')} className="text-blue-600 font-semibold hover:underline">
-                Login
-              </button>
-            </p>
           </form>
         )}
       </div>

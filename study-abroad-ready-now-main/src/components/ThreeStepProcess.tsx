@@ -1,12 +1,9 @@
 import { CheckCircle, Users, Target, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
-import { toast } from "@/components/ui/use-toast";
 
 const ThreeStepProcess = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, setIntendedRoute } = useAuth();
 
   const steps = [
     {
@@ -20,7 +17,9 @@ const ThreeStepProcess = () => {
         "Family Support Assessment",
         "Willingness and Readiness to Commit to Hard Work",
         "Free Readiness Assessment with a Detailed Percentage Score",
+        "Results Will Be Provided Shortly via Email or Phone Call",
         "Expert Review and Discussion Based on your Answers",
+        
       ],
       cta: "Start Your Assessment",
       gradient: "from-blue-500 to-blue-600",
@@ -40,7 +39,7 @@ const ThreeStepProcess = () => {
         "Live consultations with overseas professionals",
         "Cultural preparation and lifestyle guidance",
       ],
-      cta: "", // Button removed
+      cta: "",
       gradient: "from-teal-500 to-teal-600",
     },
     {
@@ -57,7 +56,7 @@ const ThreeStepProcess = () => {
         "Quality assurance and regular follow-ups",
         "Track your application process",
       ],
-      cta: "", // Button removed
+      cta: "", 
       gradient: "from-orange-500 to-orange-600",
     },
   ];
@@ -112,25 +111,15 @@ const ThreeStepProcess = () => {
                       {step.description}
                     </p>
 
-                    {/* Only render button for Step 1 */}
-                    {index === 0 && (
+                    {step.cta && (
                       <Button
                         className={`bg-gradient-to-r ${step.gradient} hover:shadow-lg transition-all duration-300 group`}
                         onClick={() => {
                           if (step.route) {
-                            if (isAuthenticated) {
-                              navigate(step.route);
-                            } else {
-                              setIntendedRoute(step.route);
-                              toast({
-                                title: "Authentication Required",
-                                description: "Please login or register to start the assessment.",
-                                variant: "destructive",
-                              });
-                              navigate("/register");
-                            }
+                            navigate(step.route);
                           }
                         }}
+                        aria-label={`Start ${step.title}`}
                       >
                         {step.cta}
                         <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />

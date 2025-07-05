@@ -20,7 +20,7 @@ const HeroSection = () => {
 
   return (
     <section id="home" className="relative min-h-screen -mt-10 flex items-center overflow-hidden" style={{background: 'linear-gradient(to bottom, #4CA7A9, #A0D2C6)'}}>
-      {/* Background Elements */}
+     
       <div className="absolute inset-0 bg-grid-pattern opacity-3"></div>
       <div className="absolute top-10 right-10 w-80 h-80 bg-gradient-to-br from-blue-100/40 to-green-100/40 rounded-full blur-3xl"></div>
       <div className="absolute bottom-10 left-10 w-96 h-96 bg-gradient-to-br from-green-100/30 to-blue-100/30 rounded-full blur-3xl"></div>
@@ -29,13 +29,13 @@ const HeroSection = () => {
       <div className="relative max-w-7xl mx-auto px-4 py-20">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
-            {/* Badge */}
+            
             <div className="inline-flex items-center bg-gradient-to-r from-blue-100 to-teal-100 text-blue-800 px-4 py-2 rounded-full text-sm font-semibold">
               <CheckCircle className="w-4 h-4 mr-2" />
               Free Assessment • No Hidden Costs
             </div>
 
-            {/* Main Headline */}
+            
             <h1 className="text-4xl lg:text-4xl font-bold text-slate-900 leading-tight">
               Confused About Studying Abroad or Choosing the Right Consultancy?
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-600">
@@ -43,12 +43,12 @@ const HeroSection = () => {
               </span>
             </h1>
 
-            {/* Sub-headline */}
+            
             <p className="text-xl text-slate-600 leading-relaxed max-w-2xl">
               Join our 3-step verification process to make confident, well-informed decisions about studying abroad. Powered by AI and expert insights, we help assess your readiness, match you with the right country, and connect you with trusted consultancy tie-ups to ensure transparent and reliable support.
             </p>
 
-            {/* Benefits */}
+            
             <div className="space-y-3">
               {[
                 "AI-based readiness assessment",
@@ -62,7 +62,7 @@ const HeroSection = () => {
               ))}
             </div>
 
-            {/* CTA */}
+            
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
                 onClick={handleCTAClick}
@@ -87,7 +87,7 @@ const HeroSection = () => {
               </Button>
             </div>
 
-            {/* Stats */}
+            
             <div className="grid grid-cols-3 gap-6 pt-8 border-t border-slate-200 mb-0">
               {stats.map((stat, index) => (
                 <div key={index} className="text-center">
@@ -103,7 +103,7 @@ const HeroSection = () => {
             </div>
           </div>
 
-          {/* Hero Image */}
+         
           <div className="relative">
             <div className="relative z-10">
               <img 
@@ -112,7 +112,7 @@ const HeroSection = () => {
                 className="w-full max-w-lg mx-auto h-auto drop-shadow-2xl"
               />
             </div>
-            {/* Floating Elements */}
+            
             {/* <div className="absolute top-10 right-10 bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg animate-float">
               <div className="flex items-center gap-2">
                 <CheckCircle className="text-green-500" size={20} />

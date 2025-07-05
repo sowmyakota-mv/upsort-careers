@@ -29,7 +29,7 @@ const Navigation = () => {
     <nav className="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-100">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo Section */}
+          
           <div className="flex items-center">
             <img
               src="/lovable-uploads/Upsort-career.png"
@@ -39,7 +39,7 @@ const Navigation = () => {
             <span className="ml-3 text-xl font-bold text-slate-800">Upsort Careers</span>
           </div>
 
-          {/* Desktop Navigation */}
+          
           <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <button
@@ -51,38 +51,19 @@ const Navigation = () => {
               </button>
             ))}
 
-            {/* User Section */}
-            {!user ? (
-              <Button
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  navigate("/login");
-                }}
-                className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white"
-              >
-                LogIn / SignIn
-              </Button>
-            ) : (
-              <div className="flex items-center justify-between space-x-4 hover:cursor-pointer">
-                <UserCircle className="w-8 h-8 text-blue-600" />
-                <span className="font-medium text-gray-700">
-                  {user.name}
-                </span>
-                <Button
-                size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    logout();
-                    setIsMenuOpen(false);
-                  }}
-                >
-                  Logout
-                </Button>
-              </div>
-            )}
+           <Button
+  onClick={() => {
+    setIsMenuOpen(false);
+    navigate("/register");
+  }}
+  className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white"
+>
+  Register
+</Button>
+
           </div>
 
-          {/* Mobile Menu Button */}
+          
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -93,7 +74,7 @@ const Navigation = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
+        
         {isMenuOpen && (
           <div className="md:hidden bg-white border-t border-slate-100">
             <div className="px-2 pt-2 pb-3 space-y-1">
@@ -107,7 +88,7 @@ const Navigation = () => {
                 </button>
               ))}
 
-              {/* Mobile User Section */}
+              
               <div className="border-t border-slate-100 mt-3 pt-3 px-3">
                 {!user ? (
                   <Button
@@ -117,7 +98,7 @@ const Navigation = () => {
                     }}
                     className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white"
                   >
-                    LogIn / SignIn
+                    Register
                   </Button>
                 ) : (
                   <div className="flex items-center justify-between">

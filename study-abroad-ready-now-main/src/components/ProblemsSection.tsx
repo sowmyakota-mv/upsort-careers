@@ -54,7 +54,7 @@ const ProblemsSection = () => {
               Our 1-Step Process Helps You Avoid These Problems
             </h3>
             <p className="text-green-700 text-lg">
-              Get comprehensive assessment, expert guidance, and verified consultancy matching
+              Get AI driven assessment, expert guidance, and verified consultancy matching
             </p>
           </div>
         </div>
