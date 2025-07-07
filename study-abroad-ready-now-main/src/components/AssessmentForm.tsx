@@ -137,7 +137,7 @@ const AssessmentForm = () => {
         payload[`question_${index + 1}`] = answer;
       });
 
-      const response = await fetch('http://localhost:5000/api/assessment', {
+      const response = await fetch('https://upsort-careers-server-os1r.onrender.com/api/assessment', {
         method: 'POST',
         body: JSON.stringify(payload),
         headers: { 'Content-Type': 'application/json' },
