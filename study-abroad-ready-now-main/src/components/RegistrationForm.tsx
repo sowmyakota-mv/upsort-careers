@@ -9,12 +9,6 @@ const RegistrationForm = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [contactError, setContactError] = useState('');
-
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -23,28 +17,18 @@ const RegistrationForm = () => {
     city: '',
   });
 
-  // Online/Offline Detection
-  useEffect(() => {
-    const handleOffline = () => setError('You are offline. Please check your internet connection.');
-    const handleOnline = () => setError('');
+  const [submittedData, setSubmittedData] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [contactError, setContactError] = useState('');
 
-    window.addEventListener('offline', handleOffline);
-    window.addEventListener('online', handleOnline);
-
-    return () => {
-      window.removeEventListener('offline', handleOffline);
-      window.removeEventListener('online', handleOnline);
-    };
-  }, []);
-
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
 
     if (name === 'email') {
       if (!validateEmail(value)) {
@@ -56,7 +40,7 @@ const RegistrationForm = () => {
   };
 
   const handleContactChange = (value) => {
-    setFormData(prev => ({ ...prev, contact: value }));
+    setFormData((prev) => ({ ...prev, contact: value }));
 
     if (value.length < 7 || value.length > 15) {
       setContactError('Contact number must be between 7 and 15 digits.');
@@ -74,71 +58,63 @@ const RegistrationForm = () => {
       city: formData.city,
     };
 
-    emailjs
+    return emailjs
       .send('service_6m3emyd', 'template_p3v0tvf', templateParams, 'WV4ATcmY4I9TjdaBe')
-      .then(response => {
-        console.log('Registration email sent successfully!', response.status, response.text);
+      .then((response) => {
+        console.log('Email sent successfully!', response.status, response.text);
       })
-      .catch(err => {
-        console.error('Failed to send registration email:', err);
+      .catch((err) => {
+        console.error('Email sending failed:', err);
       });
   };
 
-  
   const saveRegistrationToBackend = async () => {
-  try {
-    const url = import.meta.env.MODE === 'development'
-      ? '/api/register'
-      : 'https://upsort-careers-upsortbackend.onrender.com/api/register';
+    try {
+      const response = await fetch('http://localhost:5000/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
 
-    const response = await fetch(url, { 
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    });
+      if (!response.ok) throw new Error('Backend submission failed');
 
-    if (response.ok) {
-      console.log('Registration successfully saved via backend.');
-    } else {
-      console.error('Failed to submit registration to backend.');
-      throw new Error('Backend submission failed');
+      const result = await response.json();
+      console.log('Backend Response:', result);
+      return result;
+    } catch (error) {
+      console.error('Error in backend submission:', error);
+      throw error;
     }
-  } catch (error) {
-    console.error('Error submitting to backend:', error);
-    throw error;
-  }
-};
-
+  };
 
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
-    setError('');
 
-    // Connectivity check
     if (!navigator.onLine) {
       setError('You are offline. Please check your internet connection.');
       return;
     }
 
-    // Email validation
     if (!validateEmail(formData.email)) {
       setEmailError('Please enter a valid email address.');
       return;
     }
 
-    // Contact number validation
     if (formData.contact.length < 7 || formData.contact.length > 15) {
       setContactError('Contact number must be between 7 and 15 digits.');
       return;
     }
 
     setIsLoading(true);
+    setError('');
 
     try {
       await sendRegistrationEmail();
       await saveRegistrationToBackend();
 
       login({ name: `${formData.firstName} ${formData.lastName}`, email: formData.email });
+      setSubmittedData(formData);
+      setFormData({ firstName: '', lastName: '', contact: '', email: '', city: '' });
       setIsSubmitted(true);
     } catch (err) {
       setError('Something went wrong. Please try again later.');
@@ -147,39 +123,43 @@ const RegistrationForm = () => {
     }
   };
 
-  const handleReturnHome = () => {
-    navigate('/');
-  };
+  const handleReturnHome = () => navigate('/');
 
   return (
     <section id="auth" className="min-h-screen flex flex-col-reverse lg:flex-row">
+      {/* Left Panel */}
       <div
         className="lg:w-1/2 bg-cover bg-center text-white flex justify-center items-center p-10"
         style={{ backgroundImage: "url('/lovable-uploads/background-image.jpg')" }}
       >
         <div className="text-center flex flex-col items-center">
-          <img
-            src="/lovable-uploads/Upsort-career.png"
-            alt="Upsort Careers"
-            className="h-16 w-auto mb-4"
-          />
+          <img src="/lovable-uploads/Upsort-career.png" alt="Upsort Careers" className="h-16 w-auto mb-4" />
           <h2 className="text-4xl font-bold uppercase mb-6">Upsort Career</h2>
           <p className="text-2xl font-semibold leading-relaxed max-w-xl mb-4">
-            "At Upsort Career, we guide you in making confident, well-informed decisions about studying abroad.
-            Our trusted consultants and AI-powered assessment ensure you're on the right path to your dream destination."
+            "At Upsort Career, we guide you in making confident, well-informed decisions about studying abroad. Our trusted consultants and AI-powered assessment ensure you're on the right path to your dream destination."
           </p>
           <p className="italic text-lg mt-2">— Your Trusted Pathway to Global Success</p>
         </div>
       </div>
 
+      {/* Right Panel */}
       <div className="lg:w-1/2 flex justify-center items-center bg-white p-10">
         {isSubmitted ? (
           <div className="flex flex-col justify-center items-center w-full min-h-[500px] bg-white p-10 text-center rounded-xl shadow-lg">
             <h2 className="text-4xl font-bold mb-4 text-gray-800">Thank You!</h2>
             <p className="text-lg text-gray-600 mb-2">Your submission has been successfully received.</p>
+            {submittedData && (
+              <div className="text-left mt-4 text-gray-700">
+                <p><strong>First Name:</strong> {submittedData.firstName}</p>
+                <p><strong>Last Name:</strong> {submittedData.lastName}</p>
+                <p><strong>Email:</strong> {submittedData.email}</p>
+                <p><strong>Contact:</strong> {submittedData.contact}</p>
+                <p><strong>City:</strong> {submittedData.city}</p>
+              </div>
+            )}
             <button
               onClick={handleReturnHome}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300"
+              className="mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300"
             >
               OK
             </button>
@@ -189,9 +169,7 @@ const RegistrationForm = () => {
             onSubmit={handleRegisterSubmit}
             className="w-full max-w-md space-y-6 bg-gray-50 p-8 rounded-xl shadow-lg"
           >
-            <h2 className="text-3xl font-bold mb-4 text-center text-gray-800">
-              Hi 👋
-            </h2>
+            <h2 className="text-3xl font-bold mb-4 text-center text-gray-800">Hi 👋</h2>
             <p className="text-gray-600 text-center mb-6">Let's start with your personal details</p>
 
             {error && <div className="text-red-500 text-center mb-4">{error}</div>}
