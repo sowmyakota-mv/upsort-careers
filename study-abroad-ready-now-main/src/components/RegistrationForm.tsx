@@ -147,19 +147,19 @@ const RegistrationForm = () => {
   };
 
   return (
-    <section id="auth" className="min-h-screen flex flex-col lg:flex-row">
+    <section id="auth" className="min-h-screen lg:min-h-screen flex flex-col lg:flex-row">
       <div
-        className="lg:w-1/2 bg-cover bg-center text-white flex justify-start items-center p-10"
+        className="lg:w-1/2 w-full h-72 lg:h-auto bg-cover bg-center text-white flex justify-start items-center p-10"
         style={{ backgroundImage: "url('/lovable-uploads/background-image.jpg')" }}
       >
-        <div className="text-center flex flex-col items-center -mt-24">
+        <div className="text-center flex flex-col items-center">
           <img
             src="/lovable-uploads/Upsort-career.png"
             alt="Upsort Careers"
             className="h-16 w-auto mb-4"
           />
-          <h2 className="text-4xl font-bold uppercase mb-6">Upsort Career</h2>
-          <p className="text-2xl font-semibold leading-relaxed max-w-xl mb-4">
+          <h2 className="text-2xl lg:text-4x1 font-bold uppercase mb-4">Upsort Career</h2>
+          <p className="text-1g lg:text-2x1 font-semibold leading-relaxed max-w-xl mb-4 px-2">
             "At Upsort Career, we guide you in making confident, well-informed decisions about studying abroad.
             Our trusted consultants and AI-powered assessment ensure you're on the right path to your dream destination."
           </p>
@@ -167,7 +167,7 @@ const RegistrationForm = () => {
         </div>
       </div>
 
-      <div className="lg:w-1/2 flex justify-center items-center bg-white p-10">
+      <div className="lg:w-1/2 w-full flex justify-center items-center bg-white p-6 lg:p-10">
         {isSubmitted ? (
           <div className="flex flex-col justify-center items-center w-full min-h-[500px] bg-white p-10 text-center rounded-xl shadow-lg">
             <h2 className="text-4xl font-bold mb-4 text-gray-800">Thank You!</h2>
