@@ -84,26 +84,31 @@ const RegistrationForm = () => {
       });
   };
 
-  // ✅ Submit to backend (corrected URL and function)
+  
   const saveRegistrationToBackend = async () => {
-    try {
-      const response = await fetch('/api/register', { // Correct backend endpoint
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
+  try {
+    const url = import.meta.env.MODE === 'development'
+      ? '/api/register'
+      : 'https://upsort-careers-upsortbackend.onrender.com/api/register';
 
-      if (response.ok) {
-        console.log('Registration successfully saved via backend.');
-      } else {
-        console.error('Failed to submit registration to backend.');
-        throw new Error('Backend submission failed');
-      }
-    } catch (error) {
-      console.error('Error submitting to backend:', error);
-      throw error;
+    const response = await fetch(url, { 
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+
+    if (response.ok) {
+      console.log('Registration successfully saved via backend.');
+    } else {
+      console.error('Failed to submit registration to backend.');
+      throw new Error('Backend submission failed');
     }
-  };
+  } catch (error) {
+    console.error('Error submitting to backend:', error);
+    throw error;
+  }
+};
+
 
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
@@ -130,7 +135,7 @@ const RegistrationForm = () => {
     setIsLoading(true);
 
     try {
-      sendRegistrationEmail();
+      await sendRegistrationEmail();
       await saveRegistrationToBackend();
 
       login({ name: `${formData.firstName} ${formData.lastName}`, email: formData.email });
