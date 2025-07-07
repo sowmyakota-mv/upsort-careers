@@ -23,7 +23,7 @@ app.post('/api/register', async (req, res) => {
   const formData = req.body;
 
   try {
-    const response = await axios.post('https://script.google.com/macros/s/AKfycbwsRtQxpGOvkvPwiK8vwiJ6y8Kk4IGhz6A5xW8l1tUb84-iSjybNfALcmmV7kbEXBbMiA/exec', formData, {
+    const response = await axios.post('https://script.google.com/macros/s/AKfycbzbSTjwqpYSD8QD8ZBU1QEjcVq-jBdBWa-XSWz0BJ1vRqnzVfXhx0cXYn8hPfQYzKohtA/exec', formData, {
       headers: { 'Content-Type': 'application/json' },
     });
 
