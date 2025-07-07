@@ -126,7 +126,7 @@ const RegistrationForm = () => {
   const handleReturnHome = () => navigate('/');
 
   return (
-    <section id="auth" className="min-h-screen flex flex-col-reverse lg:flex-row">
+    <section id="auth" className="min-h-screen flex flex-row">
       {/* Left Panel */}
       <div
         className="lg:w-1/2 bg-cover bg-center text-white flex justify-center items-center p-10"
