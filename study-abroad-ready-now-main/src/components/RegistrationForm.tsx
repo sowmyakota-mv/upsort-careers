@@ -147,9 +147,9 @@ const RegistrationForm = () => {
   };
 
   return (
-    <section id="auth" className="min-h-screen flex flex-col lg:flex-row">
+    <section id="auth" className="min-h-screen flex flex-col-reverse lg:flex-row">
       <div
-        className="lg:w-1/2 bg-cover bg-center text-white flex justify-start items-center p-10"
+        className="lg:w-1/2 bg-cover bg-center text-white flex justify-center items-center p-10"
         style={{ backgroundImage: "url('/lovable-uploads/background-image.jpg')" }}
       >
         <div className="text-center flex flex-col items-center">
