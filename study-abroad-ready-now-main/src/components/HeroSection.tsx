@@ -19,14 +19,14 @@ const HeroSection = () => {
   ];
 
   return (
-    <section id="home" className="relative min-h-screen -mt-10 flex items-center overflow-hidden" style={{background: 'linear-gradient(to bottom, #4CA7A9, #A0D2C6)'}}>
+    <section id="home" className="relative min-h-[60px] -mt-2 flex items-center overflow-hidden" style={{background: 'linear-gradient(to bottom, #4CA7A9, #A0D2C6)'}}>
      
       <div className="absolute inset-0 bg-grid-pattern opacity-3"></div>
       <div className="absolute top-10 right-10 w-80 h-80 bg-gradient-to-br from-blue-100/40 to-green-100/40 rounded-full blur-3xl"></div>
       <div className="absolute bottom-10 left-10 w-96 h-96 bg-gradient-to-br from-green-100/30 to-blue-100/30 rounded-full blur-3xl"></div>
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-br from-blue-50/20 to-green-50/20 rounded-full blur-3xl"></div>
       
-      <div className="relative max-w-7xl mx-auto px-4 py-20">
+      <div className="relative max-w-7xl mx-auto px-4 py-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
             

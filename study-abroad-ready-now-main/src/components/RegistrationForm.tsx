@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import emailjs from 'emailjs-com';
@@ -14,7 +14,6 @@ const RegistrationForm = () => {
   const [error, setError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [contactError, setContactError] = useState('');
-  const [countryName, setCountryName] = useState('');
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -24,12 +23,26 @@ const RegistrationForm = () => {
     city: '',
   });
 
-  const validateEmail = (email: string) => {
+  // Online/Offline Detection
+  useEffect(() => {
+    const handleOffline = () => setError('You are offline. Please check your internet connection.');
+    const handleOnline = () => setError('');
+
+    window.addEventListener('offline', handleOffline);
+    window.addEventListener('online', handleOnline);
+
+    return () => {
+      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener('online', handleOnline);
+    };
+  }, []);
+
+  const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
 
@@ -39,6 +52,16 @@ const RegistrationForm = () => {
       } else {
         setEmailError('');
       }
+    }
+  };
+
+  const handleContactChange = (value) => {
+    setFormData(prev => ({ ...prev, contact: value }));
+
+    if (value.length < 7 || value.length > 15) {
+      setContactError('Contact number must be between 7 and 15 digits.');
+    } else {
+      setContactError('');
     }
   };
 
@@ -54,47 +77,73 @@ const RegistrationForm = () => {
     emailjs
       .send('service_6m3emyd', 'template_p3v0tvf', templateParams, 'WV4ATcmY4I9TjdaBe')
       .then(response => {
-        console.log('Registration Email sent successfully!', response.status, response.text);
+        console.log('Registration email sent successfully!', response.status, response.text);
       })
       .catch(err => {
         console.error('Failed to send registration email:', err);
       });
   };
 
-  const handleRegisterSubmit = (e: React.FormEvent) => {
+  // ✅ Submit to backend (corrected URL and function)
+  const saveRegistrationToBackend = async () => {
+    try {
+      const response = await fetch('/api/register', { // Correct backend endpoint
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        console.log('Registration successfully saved via backend.');
+      } else {
+        console.error('Failed to submit registration to backend.');
+        throw new Error('Backend submission failed');
+      }
+    } catch (error) {
+      console.error('Error submitting to backend:', error);
+      throw error;
+    }
+  };
+
+  const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
+    // Connectivity check
+    if (!navigator.onLine) {
+      setError('You are offline. Please check your internet connection.');
+      return;
+    }
+
+    // Email validation
     if (!validateEmail(formData.email)) {
       setEmailError('Please enter a valid email address.');
       return;
     }
 
+    // Contact number validation
     if (formData.contact.length < 7 || formData.contact.length > 15) {
       setContactError('Contact number must be between 7 and 15 digits.');
       return;
     }
 
     setIsLoading(true);
-    sendRegistrationEmail();
-    login({ name: `${formData.firstName} ${formData.lastName}`, email: formData.email });
-    setIsSubmitted(true);
-    setIsLoading(false);
+
+    try {
+      sendRegistrationEmail();
+      await saveRegistrationToBackend();
+
+      login({ name: `${formData.firstName} ${formData.lastName}`, email: formData.email });
+      setIsSubmitted(true);
+    } catch (err) {
+      setError('Something went wrong. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleReturnHome = () => {
     navigate('/');
-  };
-
-  const handleContactChange = (value: string, data: any) => {
-    setFormData(prev => ({ ...prev, contact: value }));
-    setCountryName(data.name || 'Unknown');
-
-    if (value.length < 7 || value.length > 15) {
-      setContactError('Contact number must be between 7 and 15 digits.');
-    } else {
-      setContactError('');
-    }
   };
 
   return (
@@ -212,10 +261,9 @@ const RegistrationForm = () => {
 
             <button
               type="submit"
-              className={`w-full ${
-                emailError || contactError ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
-              } text-white font-semibold py-3 rounded-lg transition duration-300`}
-              disabled={!!emailError || !!contactError || isLoading}
+              className={`w-full ${emailError || contactError || !navigator.onLine ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                } text-white font-semibold py-3 rounded-lg transition duration-300`}
+              disabled={!!emailError || !!contactError || isLoading || !navigator.onLine}
             >
               {isLoading ? 'Registering...' : 'Register'}
             </button>

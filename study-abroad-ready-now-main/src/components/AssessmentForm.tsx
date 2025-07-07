@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Button } from './ui/button';
 import { useNavigate } from 'react-router-dom';
-import emailjs from 'emailjs-com';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 
@@ -22,9 +21,10 @@ const step2Questions = [
 ];
 
 const AssessmentForm = () => {
-  const [step, setStep] = useState<number>(1);
+  const [step, setStep] = useState(1);
   const [contactError, setContactError] = useState('');
   const navigate = useNavigate();
+  const [isLoading, setIsLoading]=useState(false)
   const [formData, setFormData] = useState({
     name: '',
     contact: '',
@@ -161,33 +161,45 @@ const AssessmentForm = () => {
     setStep(2);
   };
 
-  const sendAssessmentEmail = () => {
-    const allQuestions = [...step1Questions, ...step2Questions];
-
-    const answersList = allQuestions.map((question, index) => {
-      return `Q${index + 1}: ${question.text}\nSelected Answer: ${formData.answers[index]}\n`;
-    }).join('\n');
-
-    const templateParams = {
+  const sendToGoogleSheet = async () => {
+  try {
+    const payload: any = {
       name: formData.name,
-      email: formData.email,
       contact: formData.contact,
-      answer: answersList,
+      email: formData.email,
     };
 
-    emailjs.send('service_6m3emyd', 'template_9983ir1', templateParams, 'WV4ATcmY4I9TjdaBe')
-      .then((response) => {
-        console.log('Assessment email sent successfully!', response.status, response.text);
-      })
-      .catch((err) => {
-        console.error('Failed to send assessment email:', err);
-      });
-  };
+    // Add each answer separately
+    formData.answers.forEach((answer, index) => {
+      payload[`question_${index + 1}`] = answer;
+    });
 
-  const handleSubmit = (e: React.FormEvent) => {
+    const response = await fetch('http://localhost:5000/api/assessment', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      console.log('Data sent to backend and Google Sheet');
+    } else {
+      console.error('Error submitting via backend');
+    }
+  } catch (error) {
+    console.error('Error submitting via backend:', error);
+  }
+};
+
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validateStep2()) {
-      sendAssessmentEmail();
+      setIsLoading(true)
+      await sendToGoogleSheet();
+      setIsLoading(false)
       setSubmitted(true);
     }
   };
@@ -218,11 +230,12 @@ const AssessmentForm = () => {
       <div className="bg-white shadow-lg rounded-2xl w-full max-w-[700px] p-8">
         {submitted ? (
           <div className="text-center p-4">
-            <h2 className="text-3xl font-bold ">Thank you for submitting the assessment.</h2>
-            <p className="text-lg">We will reach out to you soon.</p>
-            <Button className="mt-6" onClick={() => navigate('/')}>
-              Go to Home
-            </Button>
+            <h2 className="text-3xl font-bold">🎉 Thank you for submitting the assessment!</h2>
+<p className="text-lg mt-2">We appreciate your time and will get in touch with you soon. 😊</p>
+<Button className="mt-6" onClick={() => navigate('/')}>
+  🏠 Go to Home
+</Button>
+
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-8">
@@ -356,7 +369,7 @@ const AssessmentForm = () => {
                     Back
                   </Button>
                   <Button type="submit">
-                    Submit
+                    {isLoading ? 'Submitting...' : 'Submit'}
                   </Button>
                 </div>
               </>
