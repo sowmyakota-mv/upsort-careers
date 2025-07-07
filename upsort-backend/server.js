@@ -18,14 +18,18 @@ app.get('/', (req, res) => {
 });
 
 // Registration form route
+const qs = require('qs');
+
 app.post('/api/register', async (req, res) => {
   console.log('Request received at /api/register:', req.body);
   const formData = req.body;
 
   try {
-    const response = await axios.post('https://script.google.com/macros/s/AKfycbzbSTjwqpYSD8QD8ZBU1QEjcVq-jBdBWa-XSWz0BJ1vRqnzVfXhx0cXYn8hPfQYzKohtA/exec', formData, {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    const response = await axios.post(
+      'https://script.google.com/macros/s/AKfycbzbSTjwqpYSD8QD8ZBU1QEjcVq-jBdBWa-XSWz0BJ1vRqnzVfXhx0cXYn8hPfQYzKohtA/exec',
+      qs.stringify(formData), 
+      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+    );
 
     console.log('Registration submitted:', response.data);
     res.status(200).json({ message: 'Registration form submitted successfully', data: response.data });
@@ -34,6 +38,7 @@ app.post('/api/register', async (req, res) => {
     res.status(500).json({ message: 'Failed to submit registration form', error: error.message });
   }
 });
+
 
 app.post('/api/assessment', async (req, res) => {
   console.log('Request received at /api/assessment:', req.body);
