@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
     proxy: {
   '/api': {
-    target: 'http://localhost:5000',
+    target: 'https://upsort-careers-server-os1r.onrender.com',
     changeOrigin: true,
     secure: false,
   },
