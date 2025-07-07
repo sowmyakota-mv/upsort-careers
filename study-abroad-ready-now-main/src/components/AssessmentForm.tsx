@@ -22,25 +22,22 @@ const step2Questions = [
 
 const AssessmentForm = () => {
   const [step, setStep] = useState(1);
-  const [contactError, setContactError] = useState('');
-  const navigate = useNavigate();
-  const [isLoading, setIsLoading]=useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     contact: '',
     email: '',
     answers: Array(step1Questions.length + step2Questions.length).fill(null)
   });
-
   const [errors, setErrors] = useState({
     name: '',
     contact: '',
     email: '',
     ratings: Array(step1Questions.length + step2Questions.length).fill('')
   });
-
   const [submitted, setSubmitted] = useState(false);
   const questionRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const navigate = useNavigate();
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const contactRegex = /^\+?[1-9]\d{6,14}$/;
@@ -49,28 +46,28 @@ const AssessmentForm = () => {
     const { name, value } = e.target;
 
     let fieldError = '';
-    if (name === 'email') {
-      if (value.trim() === '') {
-        fieldError = 'Please enter your email';
-      } else if (!emailRegex.test(value)) {
-        fieldError = 'Please enter a valid email';
-      }
+    if (name === 'email' && !emailRegex.test(value)) {
+      fieldError = 'Please enter a valid email';
     }
-
-    if (name === 'contact') {
-      if (value.trim() === '') {
-        fieldError = 'Please enter your contact number';
-      } else if (!contactRegex.test(value)) {
-        fieldError = 'Please enter a valid contact number';
-      }
+    if (name === 'contact' && !contactRegex.test(value)) {
+      fieldError = 'Please enter a valid contact number';
     }
-
     if (name === 'name' && value.trim() === '') {
       fieldError = 'Please enter your name';
     }
 
     setFormData({ ...formData, [name]: value });
     setErrors({ ...errors, [name]: fieldError });
+  };
+
+  const handleContactChange = (value: string) => {
+    setFormData(prev => ({ ...prev, contact: value }));
+
+    let fieldError = '';
+    if (value.length < 7 || value.length > 15) {
+      fieldError = 'Contact number must be between 7 and 15 digits.';
+    }
+    setErrors(prev => ({ ...prev, contact: fieldError }));
   };
 
   const validateLogin = () => {
@@ -81,19 +78,11 @@ const AssessmentForm = () => {
       newErrors.name = 'Please enter your name';
       valid = false;
     }
-
-    if (formData.contact.trim() === '') {
-      newErrors.contact = 'Please enter your contact number';
-      valid = false;
-    } else if (!contactRegex.test(formData.contact)) {
+    if (formData.contact.trim() === '' || !contactRegex.test(formData.contact)) {
       newErrors.contact = 'Please enter a valid contact number';
       valid = false;
     }
-
-    if (formData.email.trim() === '') {
-      newErrors.email = 'Please enter your email';
-      valid = false;
-    } else if (!emailRegex.test(formData.email)) {
+    if (formData.email.trim() === '' || !emailRegex.test(formData.email)) {
       newErrors.email = 'Please enter a valid email';
       valid = false;
     }
@@ -103,46 +92,21 @@ const AssessmentForm = () => {
   };
 
   const handleLogin = () => {
-    if (validateLogin()) {
-      setStep(2);
-    }
+    if (validateLogin()) setStep(2);
   };
 
-  const validateStep1 = () => {
+  const validateStep = (startIndex: number, endIndex: number) => {
     let valid = true;
     let newErrors = { ...errors, ratings: [...errors.ratings] };
     let firstErrorIndex = -1;
 
-    step1Questions.forEach((_, index) => {
+    for (let index = startIndex; index <= endIndex; index++) {
       if (formData.answers[index] === null) {
         newErrors.ratings[index] = 'Please select a rating';
         if (firstErrorIndex === -1) firstErrorIndex = index;
         valid = false;
       }
-    });
-
-    setErrors(newErrors);
-
-    if (firstErrorIndex !== -1) {
-      questionRefs.current[firstErrorIndex]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-
-    return valid;
-  };
-
-  const validateStep2 = () => {
-    let valid = true;
-    let newErrors = { ...errors, ratings: [...errors.ratings] };
-    let firstErrorIndex = -1;
-
-    step2Questions.forEach((_, index) => {
-      const globalIndex = step1Questions.length + index;
-      if (formData.answers[globalIndex] === null) {
-        newErrors.ratings[globalIndex] = 'Please select a rating';
-        if (firstErrorIndex === -1) firstErrorIndex = globalIndex;
-        valid = false;
-      }
-    });
 
     setErrors(newErrors);
 
@@ -154,7 +118,7 @@ const AssessmentForm = () => {
   };
 
   const handleNext = () => {
-    if (validateStep1()) setStep(3);
+    if (validateStep(0, step1Questions.length - 1)) setStep(3);
   };
 
   const handleBack = () => {
@@ -162,44 +126,40 @@ const AssessmentForm = () => {
   };
 
   const sendToGoogleSheet = async () => {
-  try {
-    const payload: any = {
-      name: formData.name,
-      contact: formData.contact,
-      email: formData.email,
-    };
+    try {
+      const payload: any = {
+        name: formData.name,
+        contact: formData.contact,
+        email: formData.email,
+      };
 
-    // Add each answer separately
-    formData.answers.forEach((answer, index) => {
-      payload[`question_${index + 1}`] = answer;
-    });
+      formData.answers.forEach((answer, index) => {
+        payload[`question_${index + 1}`] = answer;
+      });
 
-    const response = await fetch('http://localhost:5000/api/assessment', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+      const response = await fetch('http://localhost:5000/api/assessment', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'application/json' },
+      });
 
-    if (response.ok) {
-      console.log('Data sent to backend and Google Sheet');
-    } else {
-      console.error('Error submitting via backend');
+      if (response.ok) {
+        console.log('Data submitted successfully');
+      } else {
+        console.error('Error submitting via backend');
+      }
+    } catch (error) {
+      console.error('Error submitting via backend:', error);
     }
-  } catch (error) {
-    console.error('Error submitting via backend:', error);
-  }
-};
-
-
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateStep2()) {
-      setIsLoading(true)
+
+    if (validateStep(step1Questions.length, step1Questions.length + step2Questions.length - 1)) {
+      setIsLoading(true);
       await sendToGoogleSheet();
-      setIsLoading(false)
+      setIsLoading(false);
       setSubmitted(true);
     }
   };
@@ -211,18 +171,8 @@ const AssessmentForm = () => {
     let newErrors = { ...errors, ratings: [...errors.ratings] };
     newErrors.ratings[index] = '';
 
-    setFormData((prevData) => ({ ...prevData, answers: updatedAnswers }));
+    setFormData({ ...formData, answers: updatedAnswers });
     setErrors(newErrors);
-  };
-
-  const handleContactChange = (value: string, data: any) => {
-    setFormData(prev => ({ ...prev, contact: value }));
-
-    if (value.length < 7 || value.length > 15) {
-      setContactError('Contact number must be between 7 and 15 digits.');
-    } else {
-      setContactError('');
-    }
   };
 
   return (
@@ -231,11 +181,10 @@ const AssessmentForm = () => {
         {submitted ? (
           <div className="text-center p-4">
             <h2 className="text-3xl font-bold">🎉 Thank you for submitting the assessment!</h2>
-<p className="text-lg mt-2">We appreciate your time and will get in touch with you soon. 😊</p>
-<Button className="mt-6" onClick={() => navigate('/')}>
-  🏠 Go to Home
-</Button>
-
+            <p className="text-lg mt-2">We appreciate your time and will get in touch with you soon. 😊</p>
+            <Button className="mt-6" onClick={() => navigate('/')}>
+              🏠 Go to Home
+            </Button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-8">
@@ -305,16 +254,16 @@ const AssessmentForm = () => {
                     </h3>
 
                     <div className="flex flex-wrap gap-2">
-                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                      {[...Array(10)].map((_, num) => (
                         <Button
-                          key={num}
+                          key={num + 1}
                           type="button"
-                          variant={formData.answers[index] === num ? 'default' : 'outline'}
+                          variant={formData.answers[index] === num + 1 ? 'default' : 'outline'}
                           size="icon"
-                          className={formData.answers[index] === num ? 'bg-blue-500 text-white' : ''}
-                          onClick={() => handleAnswerChange(index, num)}
+                          className={formData.answers[index] === num + 1 ? 'bg-blue-500 text-white' : ''}
+                          onClick={() => handleAnswerChange(index, num + 1)}
                         >
-                          {num}
+                          {num + 1}
                         </Button>
                       ))}
                     </div>
@@ -343,16 +292,16 @@ const AssessmentForm = () => {
                       </h3>
 
                       <div className="flex flex-wrap gap-2">
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                        {[...Array(10)].map((_, num) => (
                           <Button
-                            key={num}
+                            key={num + 1}
                             type="button"
-                            variant={formData.answers[globalIndex] === num ? 'default' : 'outline'}
+                            variant={formData.answers[globalIndex] === num + 1 ? 'default' : 'outline'}
                             size="icon"
-                            className={formData.answers[globalIndex] === num ? 'bg-blue-500 text-white' : ''}
-                            onClick={() => handleAnswerChange(globalIndex, num)}
+                            className={formData.answers[globalIndex] === num + 1 ? 'bg-blue-500 text-white' : ''}
+                            onClick={() => handleAnswerChange(globalIndex, num + 1)}
                           >
-                            {num}
+                            {num + 1}
                           </Button>
                         ))}
                       </div>
@@ -368,9 +317,7 @@ const AssessmentForm = () => {
                   <Button type="button" onClick={handleBack}>
                     Back
                   </Button>
-                  <Button type="submit">
-                    {isLoading ? 'Submitting...' : 'Submit'}
-                  </Button>
+                  <Button type="submit">{isLoading ? 'Submitting...' : 'Submit'}</Button>
                 </div>
               </>
             )}
