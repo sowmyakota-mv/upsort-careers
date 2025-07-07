@@ -5,10 +5,19 @@ const axios = require('axios');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const allowedOrigins = ['http://localhost:8080', 'https://upsort-careers-react.onrender.com'];
+
 app.use(cors({
-  origin: 'http://localhost:8080',
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
+
 
 app.use(express.json());
 
