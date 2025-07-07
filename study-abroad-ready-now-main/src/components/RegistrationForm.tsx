@@ -87,7 +87,7 @@ const RegistrationForm = () => {
   // ✅ Submit to backend (corrected URL and function)
   const saveRegistrationToBackend = async () => {
     try {
-      const response = await fetch('https://upsort-careers-upsortbackend.onrender.com/api/register', { // Correct backend endpoint
+      const response = await fetch('/api/register', { // Correct backend endpoint
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
