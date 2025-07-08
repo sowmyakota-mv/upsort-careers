@@ -90,7 +90,7 @@ const Navigation = () => {
 
               
               <div className="border-t border-slate-100 mt-3 pt-3 px-3">
-                {!user ? (
+                
                   <Button
                     onClick={() => {
                       setIsMenuOpen(false);
@@ -100,26 +100,6 @@ const Navigation = () => {
                   >
                     Register
                   </Button>
-                ) : (
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <UserCircle className="w-8 h-8 text-blue-600" />
-                      <span className="font-medium text-gray-700">
-                        {user.name}
-                      </span>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        logout();
-                        setIsMenuOpen(false);
-                      }}
-                    >
-                      Logout
-                    </Button>
-                  </div>
-                )}
               </div>
             </div>
           </div>
