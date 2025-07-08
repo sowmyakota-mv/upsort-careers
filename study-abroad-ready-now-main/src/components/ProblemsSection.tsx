@@ -51,7 +51,7 @@ const ProblemsSection = () => {
         <div className="text-center bg-gradient-to-r from-green-50 to-teal-50 border border-green-200 rounded-lg p-6 shadow-lg">
           <div className="max-w-3xl mx-auto">
             <h3 className="text-2xl font-bold text-green-800 mb-4">
-              Our 1-Step Process Helps You Avoid These Problems
+              Our 3-Step Process Helps You Avoid These Problems
             </h3>
             <p className="text-green-700 text-lg">
               Get AI driven assessment, expert guidance, and verified consultancy matching
