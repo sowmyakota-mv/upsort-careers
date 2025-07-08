@@ -148,15 +148,6 @@ const RegistrationForm = () => {
           <div className="flex flex-col justify-center items-center w-full min-h-[500px] bg-white p-10 text-center rounded-xl shadow-lg">
             <h2 className="text-4xl font-bold mb-4 text-gray-800">Thank You!</h2>
             <p className="text-lg text-gray-600 mb-2">Your submission has been successfully received.</p>
-            {submittedData && (
-              <div className="text-left mt-4 text-gray-700">
-                <p><strong>First Name:</strong> {submittedData.firstName}</p>
-                <p><strong>Last Name:</strong> {submittedData.lastName}</p>
-                <p><strong>Email:</strong> {submittedData.email}</p>
-                <p><strong>Contact:</strong> {submittedData.contact}</p>
-                <p><strong>City:</strong> {submittedData.city}</p>
-              </div>
-            )}
             <button
               onClick={handleReturnHome}
               className="mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300"
