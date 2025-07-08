@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import RegistrationForm from "./components/RegistrationForm";
 import AssessmentForm from "./components/AssessmentForm";
 import { AuthProvider } from "./context/AuthContext"; 
+import ScrollToTop from "./ScrollToTop";
 
 
 const queryClient = new QueryClient();
@@ -19,6 +20,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <ScrollToTop/>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/register" element={<RegistrationForm />} />
