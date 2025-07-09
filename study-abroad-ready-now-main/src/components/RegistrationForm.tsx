@@ -137,8 +137,8 @@ const RegistrationForm = () => {
     setError('');
 
     try {
-      await sendRegistrationEmail();
       await saveRegistrationToBackend();
+      sendRegistrationEmail();
 
       login({
         name: `${formData.firstName} ${formData.lastName}`,
