@@ -8,7 +8,7 @@ const WhyChooseUs = () => {
       <div className="max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-2xl grid grid-cols-1 md:grid-cols-5">
         
         {/* Left side - Red background */}
-        <div className="md:col-span-2 bg-red-400 text-white p-10 space-y-8">
+        <div className="md:col-span-2 bg-blue-300 text-white p-10 space-y-8">
           <h2 className="text-3xl font-bold leading-snug">
             We ensure prompt <br /> services for visa & Immigration
           </h2>
