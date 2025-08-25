@@ -35,8 +35,8 @@ const WhoWeAreSection = () => {
             abroad quickly and seamlessly.
           </p>
 
-          {/* Feature Icons - 3 columns */}
-          <div className="grid grid-cols-3 gap-8 mb-6">
+          {/* Feature Icons - Responsive grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6 mb-6">
             {/* Plane Icon */}
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 flex items-center justify-center rounded-full border border-red-300 text-red-600 transition-all duration-500 transform hover:rotate-180 hover:bg-red-600 hover:text-white">
@@ -61,7 +61,7 @@ const WhoWeAreSection = () => {
               </span>
             </div>
 
-            {/* Example Third Icon */}
+            {/* Example Third Icon (Optional) */}
             {/* <div className="flex items-center gap-3">
               <div className="w-12 h-12 flex items-center justify-center rounded-full border border-red-300 text-red-600 transition-all duration-500 transform hover:rotate-180 hover:bg-red-600 hover:text-white">
                 <img

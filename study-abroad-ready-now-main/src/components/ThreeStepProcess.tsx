@@ -73,7 +73,6 @@ const ThreeStepProcess = () => {
   return (
     <section id="process" className="py-20 px-4 bg-gradient-to-b from-slate-50 to-white">
       <div className="max-w-6xl mx-auto relative">
-        
         {/* Box 1: Title + Paragraph */}
         <div className="bg-[rgba(28,103,109,0.87)] rounded-3xl shadow-xl p-12 text-center relative z-10">
           <div className="inline-flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-semibold mb-4">
@@ -97,7 +96,6 @@ const ThreeStepProcess = () => {
         <div className="relative -mt-20">
           <div className="max-w-5xl mx-auto bg-white rounded-3xl shadow-xl p-10 border border-slate-200 relative z-20">
             <div className="grid md:grid-cols-2 gap-8 items-center">
-              
               {/* Left */}
               <div className="space-y-6 text-left">
                 {(() => {
@@ -159,19 +157,38 @@ const ThreeStepProcess = () => {
               </div>
             </div>
 
-            {/* Navigation Arrows (Rectangular Buttons) */}
-            <button
-              onClick={prevStep}
-              className="absolute left-[-6rem] top-1/2 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-6 py-4 shadow-lg"
-            >
-              <ChevronLeft size={30} />
-            </button>
-            <button
-              onClick={nextStep}
-              className="absolute right-[-6rem] top-1/2 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-6 py-4 shadow-lg"
-            >
-              <ChevronRight size={30} />
-            </button>
+            {/* Navigation Arrows */}
+            <div className="hidden md:block">
+              {/* Desktop: left/right tall slim rectangle */}
+              <button
+                onClick={prevStep}
+                className="absolute left-[-3.5rem] top-1/2 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-600 text-white rounded-xl w-12 h-24 flex items-center justify-center shadow-lg"
+              >
+                <ChevronLeft size={28} />
+              </button>
+              <button
+                onClick={nextStep}
+                className="absolute right-[-3.5rem] top-1/2 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-600 text-white rounded-xl w-12 h-24 flex items-center justify-center shadow-lg"
+              >
+                <ChevronRight size={28} />
+              </button>
+            </div>
+
+            {/* Mobile: top/bottom arrows */}
+            <div className="flex justify-between mt-8 md:hidden">
+              <button
+                onClick={prevStep}
+                className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-5 py-3 flex items-center justify-center shadow-lg w-full mr-2"
+              >
+                <ChevronLeft size={28} />
+              </button>
+              <button
+                onClick={nextStep}
+                className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-5 py-3 flex items-center justify-center shadow-lg w-full ml-2"
+              >
+                <ChevronRight size={28} />
+              </button>
+            </div>
           </div>
         </div>
       </div>
