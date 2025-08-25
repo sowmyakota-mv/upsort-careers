@@ -60,15 +60,29 @@ const AssessmentForm = () => {
     setErrors({ ...errors, [name]: fieldError });
   };
 
-  const handleContactChange = (value: string) => {
-    setFormData(prev => ({ ...prev, contact: value }));
+  const handleContactChange = (value: string, country: any, e: any, formattedValue: string) => {
+  const digitsOnly = value.replace(/\D/g, '');
+  const isValid = digitsOnly.length >= 7 && digitsOnly.length <= 15;
 
-    let fieldError = '';
-    if (value.length < 7 || value.length > 15) {
-      fieldError = 'Contact number must be between 7 and 15 digits.';
-    }
-    setErrors(prev => ({ ...prev, contact: fieldError }));
-  };
+  setFormData(prev => ({ ...prev, contact: value }));
+  setErrors(prev => ({ ...prev, contact: isValid ? '' : 'Contact number must be between 7 and 15 digits.' }));
+};
+const formatContactNumber = (rawContact: string): string => {
+  if (!rawContact || typeof rawContact !== 'string') return rawContact;
+
+  if (!rawContact.startsWith('+')) {
+    return `' +${rawContact.slice(0, 2)} ${rawContact.slice(2)}`; 
+  }
+
+  const match = rawContact.match(/^(\+\d{1,4})(\d{5,})$/);
+  if (match) {
+    return `'${match[1]} ${match[2]}`;
+  }
+
+  return `'${rawContact}`; 
+};
+
+
 
   const validateLogin = () => {
     let valid = true;
@@ -126,32 +140,32 @@ const AssessmentForm = () => {
   };
 
   const sendToGoogleSheet = async () => {
-    try {
-      const payload: any = {
-        name: formData.name,
-        contact: formData.contact,
-        email: formData.email,
-      };
+  try {
+    const payload: any = {
+      name: formData.name,
+      contact: formatContactNumber(formData.contact),
+      email: formData.email,
+    };
 
-      formData.answers.forEach((answer, index) => {
-        payload[`question_${index + 1}`] = answer;
-      });
+    formData.answers.forEach((answer, index) => {
+      payload[`question_${index + 1}`] = answer;
+    });
 
-      const response = await fetch('http://localhost:5000/api/assessment', {
-        method: 'POST',
-        body: JSON.stringify(payload),
-        headers: { 'Content-Type': 'application/json' },
-      });
+    const response = await fetch('http://localhost:5000/api/assessment', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' },
+    });
 
-      if (response.ok) {
-        console.log('Data submitted successfully');
-      } else {
-        console.error('Error submitting via backend');
-      }
-    } catch (error) {
-      console.error('Error submitting via backend:', error);
+    if (response.ok) {
+      console.log('Data submitted successfully');
+    } else {
+      console.error('Error submitting via backend');
     }
-  };
+  } catch (error) {
+    console.error('Error submitting via backend:', error);
+  }
+};
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -213,13 +227,14 @@ const AssessmentForm = () => {
                 <div className="mb-4 w-full">
                   <label className="block font-medium mb-1">Contact Number *</label>
                   <PhoneInput
-                    country={'auto'}
-                    enableSearch={true}
-                    value={formData.contact}
-                    onChange={handleContactChange}
-                    placeholder="Enter your Phone Number"
-                    inputStyle={{ width: '100%', height: '50px' }}
-                  />
+  country={'auto'}
+  enableSearch={true}
+  value={formData.contact}
+  onChange={handleContactChange}
+  placeholder="Enter your Phone Number"
+  inputStyle={{ width: '100%', height: '50px' }}
+/>
+
                   {errors.contact && <p className="text-red-500 text-sm mt-1">{errors.contact}</p>}
                 </div>
 

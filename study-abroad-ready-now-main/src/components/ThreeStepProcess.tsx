@@ -1,9 +1,11 @@
 import { CheckCircle, Users, Target, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const ThreeStepProcess = () => {
   const navigate = useNavigate();
+  const [currentStep, setCurrentStep] = useState(0);
 
   const steps = [
     {
@@ -19,7 +21,6 @@ const ThreeStepProcess = () => {
         "Free Readiness Assessment with a Detailed Percentage Score",
         "Results Will Be Provided Shortly via Email or Phone Call",
         "Expert Review and Discussion Based on your Answers",
-        
       ],
       cta: "Start Your Assessment",
       gradient: "from-blue-500 to-blue-600",
@@ -56,91 +57,122 @@ const ThreeStepProcess = () => {
         "Quality assurance and regular follow-ups",
         "Track your application process",
       ],
-      cta: "", 
+      cta: "",
       gradient: "from-orange-500 to-orange-600",
     },
   ];
 
+  const nextStep = () => {
+    setCurrentStep((prev) => (prev + 1) % steps.length);
+  };
+
+  const prevStep = () => {
+    setCurrentStep((prev) => (prev - 1 + steps.length) % steps.length);
+  };
+
   return (
     <section id="process" className="py-20 px-4 bg-gradient-to-b from-slate-50 to-white">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+      <div className="max-w-6xl mx-auto relative">
+        
+        {/* Box 1: Title + Paragraph */}
+        <div className="bg-[rgba(28,103,109,0.87)] rounded-3xl shadow-xl p-12 text-center relative z-10">
           <div className="inline-flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-semibold mb-4">
             <Target className="w-4 h-4 mr-2" />
             Our Proven Process
           </div>
-          <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6">
-            Your Bridge to
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-600">
+          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4">
+            Your Bridge to{" "}
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-teal-200">
               Study Abroad Success
             </span>
           </h2>
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-            Our comprehensive 3-step verification process ensures you're fully prepared for your international education journey.
+          <p className="text-lg text-slate-100 max-w-3xl mx-auto font-medium mb-14">
+            Our comprehensive 3-step verification process helps you avoid
+            common struggles and ensures you're fully prepared for your
+            international education journey.
           </p>
         </div>
 
-        <div className="space-y-12">
-          {steps.map((step, index) => (
-            <div key={index} className="relative">
-              <div className="absolute -left-4 top-8 bg-white rounded-full p-4 shadow-lg border-4 border-slate-100 z-10">
-                <span className="text-2xl font-bold text-slate-600">0{index + 1}</span>
+        {/* Box 2: Steps (Centered & Overlapping) */}
+        <div className="relative -mt-20">
+          <div className="max-w-5xl mx-auto bg-white rounded-3xl shadow-xl p-10 border border-slate-200 relative z-20">
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              
+              {/* Left */}
+              <div className="space-y-6 text-left">
+                {(() => {
+                  const Icon = steps[currentStep].icon;
+                  return (
+                    <div
+                      className={`inline-flex items-center gap-3 bg-gradient-to-r ${steps[currentStep].gradient} text-white px-4 py-2 rounded-full`}
+                    >
+                      <Icon size={20} />
+                      <span className="font-semibold">Step {currentStep + 1}</span>
+                    </div>
+                  );
+                })()}
+
+                <h3 className="text-2xl lg:text-3xl font-bold text-slate-900 leading-tight">
+                  {steps[currentStep].title}
+                </h3>
+
+                <p
+                  className={`text-lg font-semibold bg-gradient-to-r ${steps[currentStep].gradient} bg-clip-text text-transparent`}
+                >
+                  {steps[currentStep].subtitle}
+                </p>
+
+                <p className="text-slate-600 leading-relaxed">
+                  {steps[currentStep].description}
+                </p>
+
+                {steps[currentStep].cta && (
+                  <Button
+                    className={`bg-gradient-to-r ${steps[currentStep].gradient} hover:shadow-lg transition-all duration-300 group`}
+                    onClick={() => {
+                      if (steps[currentStep].route) {
+                        navigate(steps[currentStep].route);
+                      }
+                    }}
+                  >
+                    {steps[currentStep].cta}
+                    <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                )}
               </div>
 
-              {index < steps.length - 1 && (
-                <div className="absolute left-4 top-20 w-0.5 h-20 bg-slate-200 z-0"></div>
-              )}
-
-              <div className="bg-white rounded-3xl shadow-xl p-8 ml-16 hover:shadow-2xl transition-all duration-500 border border-slate-100">
-                <div className="grid lg:grid-cols-3 gap-8 items-center">
-                  <div className="lg:col-span-1 space-y-6">
-                    <div className={`inline-flex items-center gap-3 bg-gradient-to-r ${step.gradient} text-white px-4 py-2 rounded-full`}>
-                      <step.icon size={20} />
-                      <span className="font-semibold">Step {index + 1}</span>
+              {/* Right: Features */}
+              <div>
+                <div className="grid gap-3">
+                  {steps[currentStep].features.map((feature, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors"
+                    >
+                      <CheckCircle className="text-green-500 flex-shrink-0" size={18} />
+                      <span className="text-slate-700 font-medium leading-snug">
+                        {feature}
+                      </span>
                     </div>
-
-                    <h3 className="text-2xl lg:text-3xl font-bold text-slate-900 leading-tight">
-                      {step.title}
-                    </h3>
-
-                    <p className={`text-lg font-semibold bg-gradient-to-r ${step.gradient} bg-clip-text text-transparent`}>
-                      {step.subtitle}
-                    </p>
-
-                    <p className="text-slate-600 leading-relaxed">
-                      {step.description}
-                    </p>
-
-                    {step.cta && (
-                      <Button
-                        className={`bg-gradient-to-r ${step.gradient} hover:shadow-lg transition-all duration-300 group`}
-                        onClick={() => {
-                          if (step.route) {
-                            navigate(step.route);
-                          }
-                        }}
-                        aria-label={`Start ${step.title}`}
-                      >
-                        {step.cta}
-                        <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                      </Button>
-                    )}
-                  </div>
-
-                  <div className="lg:col-span-2">
-                    <div className="grid md:grid-cols-2 gap-4">
-                      {step.features.map((feature, featureIndex) => (
-                        <div key={featureIndex} className="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                          <CheckCircle className="text-green-500 mt-1 flex-shrink-0" size={16} />
-                          <span className="text-slate-700 font-medium">{feature}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
-          ))}
+
+            {/* Navigation Arrows */}
+            <button
+              onClick={prevStep}
+              className="absolute left-[-3.5rem] top-1/2 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg p-4 shadow-lg text-xl font-bold"
+            >
+              &lt;
+            </button>
+            <button
+              onClick={nextStep}
+              className="absolute right-[-3.5rem] top-1/2 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg p-4 shadow-lg text-xl font-bold"
+            >
+              &gt;
+            </button>
+          </div>
         </div>
       </div>
     </section>

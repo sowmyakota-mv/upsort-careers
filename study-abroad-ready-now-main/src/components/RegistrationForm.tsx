@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import emailjs from 'emailjs-com';
@@ -24,9 +24,10 @@ const RegistrationForm = () => {
   const [emailError, setEmailError] = useState('');
   const [contactError, setContactError] = useState('');
 
-  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validateEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
@@ -39,7 +40,7 @@ const RegistrationForm = () => {
     }
   };
 
-  const handleContactChange = (value) => {
+  const handleContactChange = (value: string) => {
     setFormData((prev) => ({ ...prev, contact: value }));
 
     if (value.length < 7 || value.length > 15) {
@@ -49,17 +50,35 @@ const RegistrationForm = () => {
     }
   };
 
+  const formatContactNumber = (rawContact: string): string => {
+    if (!rawContact || typeof rawContact !== 'string') return rawContact;
+
+    const match = rawContact.match(/^\+(\d{1,4})(\d{6,})$/);
+    if (match) {
+      const countryCode = match[1];
+      const number = match[2];
+      return `+${countryCode} ${number}`;
+    }
+
+    return rawContact; // fallback if format doesn't match
+  };
+
   const sendRegistrationEmail = () => {
     const templateParams = {
       firstName: formData.firstName,
       lastName: formData.lastName,
       email: formData.email,
-      contact: formData.contact,
+      contact: formatContactNumber(formData.contact),
       city: formData.city,
     };
 
     return emailjs
-      .send('service_6m3emyd', 'template_p3v0tvf', templateParams, 'WV4ATcmY4I9TjdaBe')
+      .send(
+        'service_6m3emyd',
+        'template_p3v0tvf',
+        templateParams,
+        'WV4ATcmY4I9TjdaBe'
+      )
       .then((response) => {
         console.log('Email sent successfully!', response.status, response.text);
       })
@@ -70,11 +89,19 @@ const RegistrationForm = () => {
 
   const saveRegistrationToBackend = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
+      const formattedData = {
+        ...formData,
+        contact: formatContactNumber(formData.contact),
+      };
+
+      const response = await fetch(
+        'https://upsort-careers-server-os1r.onrender.com/api/register',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formattedData),
+        }
+      );
 
       if (!response.ok) throw new Error('Backend submission failed');
 
@@ -87,7 +114,7 @@ const RegistrationForm = () => {
     }
   };
 
-  const handleRegisterSubmit = async (e) => {
+  const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!navigator.onLine) {
@@ -109,12 +136,22 @@ const RegistrationForm = () => {
     setError('');
 
     try {
-      await sendRegistrationEmail();
       await saveRegistrationToBackend();
+      sendRegistrationEmail();
 
-      login({ name: `${formData.firstName} ${formData.lastName}`, email: formData.email });
+      login({
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+      });
+
       setSubmittedData(formData);
-      setFormData({ firstName: '', lastName: '', contact: '', email: '', city: '' });
+      setFormData({
+        firstName: '',
+        lastName: '',
+        contact: '',
+        email: '',
+        city: '',
+      });
       setIsSubmitted(true);
     } catch (err) {
       setError('Something went wrong. Please try again later.');
@@ -133,21 +170,30 @@ const RegistrationForm = () => {
         style={{ backgroundImage: "url('/lovable-uploads/background-image.jpg')" }}
       >
         <div className="text-center flex flex-col items-center">
-          <img src="/lovable-uploads/Upsort-career.png" alt="Upsort Careers" className="h-16 w-auto mb-4" />
+          <img
+            src="/lovable-uploads/Upsort-career.png"
+            alt="Upsort Careers"
+            className="h-16 w-auto mb-4"
+          />
           <h2 className="text-4xl font-bold uppercase mb-6">Upsort Career</h2>
           <p className="text-2xl font-semibold leading-relaxed max-w-xl mb-4">
-            "At Upsort Career, we guide you in making confident, well-informed decisions about studying abroad. Our trusted consultants and AI-powered assessment ensure you're on the right path to your dream destination."
+            "At Upsort Career, we guide you in making confident, well-informed
+            decisions about studying abroad. Our trusted consultants and
+            AI-powered assessment ensure you're on the right path to your dream
+            destination."
           </p>
           <p className="italic text-lg mt-2">— Your Trusted Pathway to Global Success</p>
         </div>
       </div>
 
-      {/* Right Panel */}
-      <div className="lg:w-1/2 flex justify-center items-center bg-white p-10">
+      {/* Right Panel - Light Grey Background */}
+      <div className="lg:w-1/2 flex justify-center items-center bg-gray-100 p-10">
         {isSubmitted ? (
-          <div className="flex flex-col justify-center items-center w-full min-h-[500px] bg-white p-10 text-center rounded-xl shadow-lg">
+          <div className="flex flex-col justify-center items-center w-full min-h-[500px] text-center">
             <h2 className="text-4xl font-bold mb-4 text-gray-800">Thank You!</h2>
-            <p className="text-lg text-gray-600 mb-2">Your submission has been successfully received.</p>
+            <p className="text-lg text-gray-600 mb-2">
+              Your submission has been successfully received.
+            </p>
             <button
               onClick={handleReturnHome}
               className="mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300"
@@ -158,10 +204,12 @@ const RegistrationForm = () => {
         ) : (
           <form
             onSubmit={handleRegisterSubmit}
-            className="w-full max-w-md space-y-6 bg-gray-50 p-8 rounded-xl shadow-lg"
+            className="w-full max-w-md space-y-6"
           >
             <h2 className="text-3xl font-bold mb-4 text-center text-gray-800">Hi 👋</h2>
-            <p className="text-gray-600 text-center mb-6">Let's start with your personal details</p>
+            <p className="text-gray-600 text-center mb-6">
+              Let's start with your personal details
+            </p>
 
             {error && <div className="text-red-500 text-center mb-4">{error}</div>}
 
@@ -209,7 +257,7 @@ const RegistrationForm = () => {
               <div>
                 <label className="block text-gray-700 font-semibold mb-2">Contact Number *</label>
                 <PhoneInput
-                  country={'auto'}
+                  country={''} // no default country, users choose manually
                   enableSearch={true}
                   value={formData.contact}
                   onChange={handleContactChange}
@@ -235,8 +283,11 @@ const RegistrationForm = () => {
 
             <button
               type="submit"
-              className={`w-full ${emailError || contactError || !navigator.onLine ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
-                } text-white font-semibold py-3 rounded-lg transition duration-300`}
+              className={`w-full ${
+                emailError || contactError || !navigator.onLine
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-blue-600 hover:bg-blue-700'
+              } text-white font-semibold py-3 rounded-lg transition duration-300`}
               disabled={!!emailError || !!contactError || isLoading || !navigator.onLine}
             >
               {isLoading ? 'Registering...' : 'Register'}
