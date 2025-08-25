@@ -1,4 +1,4 @@
-import { CheckCircle, Users, Target, ArrowRight } from "lucide-react";
+import { CheckCircle, Users, Target, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -104,9 +104,9 @@ const ThreeStepProcess = () => {
                   const Icon = steps[currentStep].icon;
                   return (
                     <div
-                      className={`inline-flex items-center gap-3 bg-gradient-to-r ${steps[currentStep].gradient} text-white px-4 py-2 rounded-full`}
+                      className={`inline-flex items-center gap-3 bg-gradient-to-r ${steps[currentStep].gradient} text-white px-4 py-2 rounded-lg`}
                     >
-                      <Icon size={20} />
+                      <Icon size={22} />
                       <span className="font-semibold">Step {currentStep + 1}</span>
                     </div>
                   );
@@ -136,7 +136,7 @@ const ThreeStepProcess = () => {
                     }}
                   >
                     {steps[currentStep].cta}
-                    <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 )}
               </div>
@@ -149,7 +149,7 @@ const ThreeStepProcess = () => {
                       key={i}
                       className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors"
                     >
-                      <CheckCircle className="text-green-500 flex-shrink-0" size={18} />
+                      <CheckCircle className="text-green-500 flex-shrink-0" size={20} />
                       <span className="text-slate-700 font-medium leading-snug">
                         {feature}
                       </span>
@@ -159,18 +159,18 @@ const ThreeStepProcess = () => {
               </div>
             </div>
 
-            {/* Navigation Arrows */}
+            {/* Navigation Arrows (Rectangular Buttons) */}
             <button
               onClick={prevStep}
-              className="absolute left-[-3.5rem] top-1/2 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg p-4 shadow-lg text-xl font-bold"
+              className="absolute left-[-6rem] top-1/2 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-6 py-4 shadow-lg"
             >
-              &lt;
+              <ChevronLeft size={30} />
             </button>
             <button
               onClick={nextStep}
-              className="absolute right-[-3.5rem] top-1/2 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg p-4 shadow-lg text-xl font-bold"
+              className="absolute right-[-6rem] top-1/2 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-6 py-4 shadow-lg"
             >
-              &gt;
+              <ChevronRight size={30} />
             </button>
           </div>
         </div>
