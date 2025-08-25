@@ -143,7 +143,7 @@ const SuccessStories = () => {
         {/* Left Side */}
         <div>
           <span className="bg-red-100 text-red-700 px-4 py-1 rounded text-sm font-semibold">
-            >> TESTIMONIALS
+            &gt;&gt; TESTIMONIALS
           </span>
           <h2 className="text-4xl lg:text-5xl font-bold mt-4 mb-6">
             What say peoples <br /> about us
