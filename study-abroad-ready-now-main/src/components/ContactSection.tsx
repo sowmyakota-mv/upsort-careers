@@ -105,10 +105,10 @@ const ContactSection = () => {
   };
 
   return (
-    <footer className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white scroll-smooth">
+    <footer id="contact" className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white scroll-smooth">
       <div className="max-w-7xl mx-auto px-6 py-16">
         {/* Heading + Paragraph */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <div className="inline-flex items-center bg-white/10 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold mb-4"> 
             <MessageCircle className="w-4 h-4 mr-2" /> Get In Touch 
           </div>
