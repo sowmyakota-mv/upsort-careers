@@ -1,9 +1,23 @@
 import { AlertTriangle, Plane } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [pathname]);
+
+  return null;
+};
 
 const WhoWeAreSection = () => {
+  const navigate = useNavigate();
+
   return (
     <section
-      id="who-we-are"
+      id="about"
       className="py-10 my-16 bg-blue-50 relative overflow-hidden"
     >
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8 items-center px-6 relative">
@@ -35,77 +49,30 @@ const WhoWeAreSection = () => {
             abroad quickly and seamlessly.
           </p>
 
-          {/* Feature Icons - Responsive grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6 mb-6">
-            {/* Plane Icon */}
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 flex items-center justify-center rounded-full border border-red-300 text-red-600 transition-all duration-500 transform hover:rotate-180 hover:bg-red-600 hover:text-white">
-                <Plane size={26} />
-              </div>
-              <span className="font-semibold text-slate-800">
-                Expertise Visa Processing
-              </span>
-            </div>
-
-            {/* Passport Icon */}
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 flex items-center justify-center rounded-full border border-red-300 text-red-600 transition-all duration-500 transform hover:rotate-180 hover:bg-red-600 hover:text-white">
-                <img
-                  src="https://cdn-icons-png.flaticon.com/512/69/69906.png"
-                  alt="Passport Icon"
-                  className="w-7 h-7 transition-transform duration-500"
-                />
-              </div>
-              <span className="font-semibold text-slate-800">
-                Fastest Working Process
-              </span>
-            </div>
-
-            {/* Example Third Icon (Optional) */}
-            {/* <div className="flex items-center gap-3">
-              <div className="w-12 h-12 flex items-center justify-center rounded-full border border-red-300 text-red-600 transition-all duration-500 transform hover:rotate-180 hover:bg-red-600 hover:text-white">
-                <img
-                  src="https://cdn-icons-png.flaticon.com/512/1828/1828640.png"
-                  alt="Trust Icon"
-                  className="w-7 h-7 transition-transform duration-500"
-                />
-              </div>
-              <span className="font-semibold text-slate-800">
-                Trusted Guidance
-              </span>
-            </div> */}
-          </div>
-
           {/* Bullet Points */}
           <ul className="space-y-2 text-slate-700 mb-6">
             <li className="flex items-center gap-2">
-              <span className="text-red-600 font-bold">➤</span> We strongly
-              support best practice
+              <span className="text-red-600 font-bold">➤</span> Expertise Visa
+              Processing
             </li>
             <li className="flex items-center gap-2">
-              <span className="text-red-600 font-bold">➤</span> Global operations
-              with trust & expertise
+              <span className="text-red-600 font-bold">➤</span> Fastest Working
+              Process
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="text-red-600 font-bold">➤</span> Trusted Guidance
             </li>
           </ul>
 
           {/* Button */}
-          <button className="px-6 py-3 bg-red-600 text-white font-semibold rounded shadow hover:bg-red-700 transition">
+          <button
+            onClick={() => navigate("/about")}
+            className="px-6 py-3 bg-red-600 text-white font-semibold rounded shadow hover:bg-red-700 transition"
+          >
             Read More
           </button>
         </div>
       </div>
-
-      {/* Airplane Dotted Path Decoration */}
-      <svg
-        className="absolute top-10 right-0 w-64 h-64 opacity-30 text-gray-300"
-        fill="none"
-        stroke="currentColor"
-        strokeDasharray="6 6"
-        strokeWidth="2"
-        viewBox="0 0 300 300"
-      >
-        <path d="M10 280 C 100 100, 200 100, 290 20" />
-      </svg>
 
       {/* Floating Plane */}
       <Plane className="w-6 h-6 text-red-500 absolute top-20 right-10 animate-float" />
@@ -196,6 +163,7 @@ const ProblemsSection = () => {
 const HomePage = () => {
   return (
     <>
+      <ScrollToTop />
       <style>{customAnimations}</style>
       <WhoWeAreSection />
       <ProblemsSection />

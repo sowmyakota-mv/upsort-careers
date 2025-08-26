@@ -12,29 +12,28 @@ const EmailChooser = () => {
   const emailApps = [
     {
       name: "Gmail",
-      url: `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`
+      url: `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`,
     },
     {
       name: "Outlook",
-      url: `https://outlook.office.com/mail/deeplink/compose?to=${email}&subject=${subject}&body=${body}`
+      url: `https://outlook.office.com/mail/deeplink/compose?to=${email}&subject=${subject}&body=${body}`,
     },
     {
       name: "Default Mail App",
-      url: `mailto:${email}?subject=${subject}&body=${body}`
-    }
+      url: `mailto:${email}?subject=${subject}&body=${body}`,
+    },
   ];
 
   return (
     <div>
       <div
         onClick={() => setShowOptions(true)}
-        className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 group cursor-pointer max-w-xs"
+        className="flex items-center gap-3 cursor-pointer hover:text-blue-400 transition-colors"
       >
-        <div className="inline-flex p-3 rounded-xl bg-gradient-to-r from-green-500 to-green-600 mb-4 group-hover:scale-110 transition-transform">
-          <Mail size={24} />
+        <div className="p-2 rounded-lg bg-gradient-to-r from-green-500 to-green-600">
+          <Mail size={18} />
         </div>
-        <h4 className="font-bold text-lg mb-2">Email</h4>
-        <p className="text-slate-300">{email}</p>
+        <span>{email}</span>
       </div>
 
       {showOptions && (
@@ -66,66 +65,79 @@ const EmailChooser = () => {
 };
 
 const ContactSection = () => {
-  const locations = ["Mumbai", "Bangalore", "Hyderabad"];
+  const locations = ["Hyderabad", "Vijayawada", "Bangalore"];
 
   const contactMethods = [
     {
       icon: Phone,
-      title: "Phone",
       detail: "+91-9705131111",
       link: "tel:+919705131111",
-      color: "from-blue-500 to-blue-600"
+      color: "from-blue-500 to-blue-600",
     },
     {
       icon: MessageCircle,
-      title: "WhatsApp",
-      detail: "+91-9705131111",
+      detail: "WhatsApp Chat",
       link: "https://wa.me/919705131111",
-      color: "from-teal-500 to-teal-600"
+      color: "from-teal-500 to-teal-600",
     },
     {
       icon: Clock,
-      title: "Available",
-      detail: "Monday-Saturday,9AM-8PM IST",
-      link: "", // This will now render as a div (non-clickable)
-      color: "from-orange-500 to-orange-600"
-    }
+      detail: "Mon-Sat, 9AM-8PM IST",
+      link: "",
+      color: "from-orange-500 to-orange-600",
+    },
   ];
 
-  return (
-    <section
-      id="contact"
-      className="py-20 px-4 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden"
-    >
-      <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
-      <div className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-teal-500/20 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-20 left-20 w-72 h-72 bg-gradient-to-br from-orange-500/20 to-pink-500/20 rounded-full blur-3xl"></div>
+  // Instead of external pages, use section IDs on homepage
+  const quickLinks = [
+    { name: "Home", id: "home" },
+    { name: "About", id: "about" },
+    { name: "Assessment", id: "process" },
+    { name: "Stories", id: "stories" },
+  ];
 
-      <div className="relative max-w-7xl mx-auto">
+  // Function to handle smooth scroll
+  const handleScroll = (id) => {
+    const section = document.getElementById(id);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  return (
+    <footer className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white scroll-smooth">
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        {/* Heading + Paragraph */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center bg-white/10 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold mb-4">
-            <MessageCircle className="w-4 h-4 mr-2" />
-            Get In Touch
+          <div className="inline-flex items-center bg-white/10 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold mb-4"> 
+            <MessageCircle className="w-4 h-4 mr-2" /> Get In Touch 
           </div>
-          <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-            Ready to Start Your
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-400">
+          <h2 className="text-4xl font-bold mb-4">
+            Ready to Start Your{" "}
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-400">         
               Study Abroad Journey?
             </span>
           </h2>
-          <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+          <p className="text-lg text-slate-300 max-w-2xl mx-auto">
             Get free consultation from our study abroad experts and take the
             first step towards your international education.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-16">
-          <div className="space-y-8">
-            <h3 className="text-2xl font-bold mb-8">
-              Contact Our Study Abroad Experts
-            </h3>
+        {/* 4-column layout */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+          {/* Column 1 - Company Info */}
+          <div>
+            <h4 className="font-bold text-xl mb-4">Upsort Careers</h4>
+            <p className="text-slate-300">
+              Your trusted partner in achieving global education dreams.
+            </p>
+          </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
+          {/* Column 2 - Contacts */}
+          <div>
+            <h4 className="font-bold text-xl mb-4">Contacts</h4>
+            <div className="space-y-4">
               {contactMethods.map((method, index) =>
                 method.link ? (
                   <a
@@ -133,60 +145,76 @@ const ContactSection = () => {
                     href={method.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block"
+                    className="flex items-center gap-3 hover:text-blue-400 transition-colors"
                   >
-                    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 group cursor-pointer">
-                      <div
-                        className={`inline-flex p-3 rounded-xl bg-gradient-to-r ${method.color} mb-4 group-hover:scale-110 transition-transform`}
-                      >
-                        <method.icon size={24} />
-                      </div>
-                      <h4 className="font-bold text-lg mb-2">{method.title}</h4>
-                      <p className="text-slate-300">{method.detail}</p>
+                    <div
+                      className={`p-2 rounded-lg bg-gradient-to-r ${method.color}`}
+                    >
+                      <method.icon size={18} />
                     </div>
+                    <span>{method.detail}</span>
                   </a>
                 ) : (
                   <div
                     key={index}
-                    className="block cursor-default"
+                    className="flex items-center gap-3 text-slate-300"
                   >
-                    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 group cursor-default">
-                      <div
-                        className={`inline-flex p-3 rounded-xl bg-gradient-to-r ${method.color} mb-4 group-hover:scale-110 transition-transform`}
-                      >
-                        <method.icon size={24} />
-                      </div>
-                      <h4 className="font-bold text-lg mb-2">{method.title}</h4>
-                      <p className="text-slate-300">{method.detail}</p>
+                    <div
+                      className={`p-2 rounded-lg bg-gradient-to-r ${method.color}`}
+                    >
+                      <method.icon size={18} />
                     </div>
+                    <span>{method.detail}</span>
                   </div>
                 )
               )}
-
+              {/* Email */}
               <EmailChooser />
             </div>
           </div>
 
-          <div className="space-y-8">
-            <h3 className="text-2xl font-bold mb-8">Office Locations</h3>
-
-            <div className="space-y-4">
+          {/* Column 3 - Locations */}
+          <div>
+            <h4 className="font-bold text-xl mb-4">Locations</h4>
+            <div className="space-y-3">
               {locations.map((location, index) => (
                 <div
                   key={index}
-                  className="flex items-center gap-4 bg-white/5 backdrop-blur-sm border border-white/10 p-6 rounded-2xl hover:bg-white/10 transition-all duration-300 group"
+                  className="flex items-center gap-3 text-slate-300"
                 >
-                  <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-3 rounded-xl group-hover:scale-110 transition-transform">
-                    <MapPin size={20} />
+                  <div className="p-2 rounded-lg bg-gradient-to-r from-pink-500 to-red-500">
+                    <MapPin size={18} />
                   </div>
-                  <span className="font-medium">{location}</span>
+                  <span>{location}</span>
                 </div>
               ))}
             </div>
           </div>
+
+          {/* Column 4 - Quick Links */}
+          <div>
+            <h4 className="font-bold text-xl mb-4">Quick Links</h4>
+            <ul className="space-y-3">
+              {quickLinks.map((link, index) => (
+                <li key={index}>
+                  <button
+                    onClick={() => handleScroll(link.id)}
+                    className="hover:text-blue-400 transition-colors text-left w-full"
+                  >
+                    {link.name}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
-    </section>
+
+      {/* Bottom Bar */}
+      <div className="border-t border-white/10 py-6 text-center text-slate-400 text-sm">
+        © 2025 Upsort Careers. All rights reserved.
+      </div>
+    </footer>
   );
 };
 

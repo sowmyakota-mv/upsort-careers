@@ -9,6 +9,7 @@ import RegistrationForm from "./components/RegistrationForm";
 import AssessmentForm from "./components/AssessmentForm";
 import { AuthProvider } from "./context/AuthContext";
 import ScrollToTop from "./ScrollToTop";
+import AboutPage from "./components/AboutPage";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
           <ScrollToTop /> 
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/about" element={<AboutPage/>}/>
             <Route path="/register" element={<RegistrationForm />} />
             <Route path="/assessment" element={<AssessmentForm />} />
             <Route path="*" element={<NotFound />} />
