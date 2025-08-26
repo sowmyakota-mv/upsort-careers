@@ -12,7 +12,7 @@ const Navigation = () => {
   const navItems = [
     { label: "Home", href: "#home" },
     { label: "About", href: "#about" },
-    { label: "Assessment", href: "#assessment" },
+    { label: "Assessment", href: "#process" },
     { label: "Process", href: "#process" },
     { label: "Stories", href: "#stories" },
     { label: "Contact", href: "#contact" },
@@ -21,10 +21,13 @@ const Navigation = () => {
   const handleNavClick = (href: string) => {
     setIsMenuOpen(false);
     const element = document.querySelector(href);
-    if (element) {
-      const yOffset = -80; // adjust based on your navbar height
+    const navbar = document.querySelector("nav"); // get navbar height dynamically
+    if (element && navbar) {
+      const navHeight = navbar.getBoundingClientRect().height;
       const y =
-        element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        element.getBoundingClientRect().top +
+        window.pageYOffset -
+        navHeight;
 
       window.scrollTo({ top: y, behavior: "smooth" });
     }
